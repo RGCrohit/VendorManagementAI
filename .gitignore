@@ -5,6 +5,12 @@ node_modules/
 __pycache__/
 *.py[cod]
 
+# Python Virtual Environments
+backend/venv/
+venv/
+env/
+.venv/
+
 # Production
 /.next/
 /out/
