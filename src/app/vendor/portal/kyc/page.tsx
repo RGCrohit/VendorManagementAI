@@ -31,7 +31,12 @@ export default function VendorKYC() {
 
   async function fetchKYCData() {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      // Use a timeout or race for auth to prevent infinite hangs
+      const authPromise = supabase.auth.getUser();
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Auth Timeout')), 5000));
+      
+      const { data: { user } } = await Promise.any([authPromise, timeoutPromise]) as any;
+
       if (!user) {
         router.push('/vendor/login');
         return;
@@ -43,7 +48,7 @@ export default function VendorKYC() {
         .eq('id', user.id)
         .single();
 
-      if (error) throw error;
+      if (error && error.code !== 'PGRST116') throw error;
       if (data) {
         setFormData({
           gst_number: data.gst_number || '',
@@ -56,7 +61,6 @@ export default function VendorKYC() {
       }
     } catch (err) {
       console.error('Error fetching KYC:', err);
-      // Don't show error if no profile yet, just stop loading
     } finally {
       setLoading(false);
     }

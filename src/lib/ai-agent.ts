@@ -23,7 +23,6 @@ export async function queryCureVendAI(prompt: string) {
     const needsData = q.includes('summary') || q.includes('project') || q.includes('vendor') || q.includes('payment') || q.includes('spend') || q.includes('money');
     
     if (needsData) {
-      // Fetch relevant data FOR context
       const [{ data: vendors }, { data: projects }, { data: payments }] = await Promise.all([
         supabase.from('vendors').select('*'),
         supabase.from('projects').select('*'),
@@ -41,33 +40,37 @@ export async function queryCureVendAI(prompt: string) {
     // 3. Prepare the final prompt
     const systemInstructions = `
       You are the CureVendAI Executive Assistant. 
-      You have the power to PERFORM ACTIONS. 
-      
-      If the user wants to SEND AN EMAIL:
-      Return ONLY a JSON string like this: {"action": "SEND_EMAIL", "to": "email", "subject": "title", "body": "content"}
-      
-      If the user wants to SCHEDULE A MEETING:
-      Return ONLY a JSON string like this: {"action": "SCHEDULE_MEETING", "title": "name", "date": "YYYY-MM-DD", "time": "HH:mm"}
-      
-      Otherwise:
       Speak in a premium, friendly business tone. Use clean bullet points for data.
-      If context is missing, say you don't have that data.
+      
+      IF THE USER WANTS TO PERFORM AN ACTION:
+      1. Send Email: Return ONLY a JSON like {"action": "SEND_EMAIL", "to": "email", "subject": "title", "body": "content"}
+      2. Schedule Meeting: Return ONLY a JSON like {"action": "SCHEDULE_MEETING", "title": "name", "date": "YYYY-MM-DD", "time": "HH:mm"}
+      
+      IMPORTANT: If you return a JSON action, do NOT include ANY other text before or after the JSON.
     `;
 
-    // 4. Generate response
     const fullPrompt = `${systemInstructions}\n\nContext Data:\n${dataContext || "No live data available."}\n\nUser Query: ${prompt}`;
-
     const result = await model.generateContent(fullPrompt);
     const response = await result.response;
-    const text = response.text();
+    let text = response.text();
+
+    // 4. Robust JSON Extraction (Regex-based)
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        const jsonData = JSON.parse(jsonMatch[0]);
+        if (jsonData.action) return jsonMatch[0]; // Return the raw JSON for the UI to handle
+      } catch (e) {
+        // Not actual JSON, continue to return text
+      }
+    }
     
-    return text || "I understood your request but couldn't generate a clear answer. Could you rephrase?";
+    return text || "I'm here to help. Could you tell me more about what you need?";
 
   } catch (error: any) {
     console.error('AI Agent Error:', error);
-    if (error.message?.includes('API_KEY_INVALID')) {
-      return "The Gemini API key provided is invalid. Please check your configuration.";
-    }
-    return "I'm having trouble accessing my intelligence right now. Please try again in a few moments.";
+    if (error.message?.includes('API_KEY_INVALID')) return "API Key error. Please contact administration.";
+    if (error.message?.includes('safety')) return "Your request was flagged by safety filters. Could you try rephrasing?";
+    return "I'm having a quick sync with the servers. Please try again in 5 seconds.";
   }
 }

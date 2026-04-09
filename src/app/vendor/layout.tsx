@@ -18,9 +18,9 @@ const VENDOR_NAV = [
   { name: 'KYC Details', href: '/vendor/portal/kyc', icon: UserCheck },
   { name: 'Quotations',  href: '/vendor/portal/quotations', icon: FileStack },
   { name: 'Projects',    href: '/vendor/portal/projects', icon: Briefcase },
-  { name: 'Payments',   href: '/vendor/payments',   icon: IndianRupee },
-  { name: 'Documents',  href: '/vendor/documents',  icon: FileText },
-  { name: 'Support',    href: '/vendor/support',     icon: HelpCircle },
+  { name: 'Payments',   href: '/vendor/portal/payments',   icon: IndianRupee },
+  { name: 'Documents',  href: '/vendor/portal/documents',  icon: FileText },
+  { name: 'Support',    href: '/vendor/portal/support',     icon: HelpCircle },
 ];
 
 export default function VendorLayout({ children }: { children: ReactNode }) {
