@@ -6,15 +6,16 @@ import {
   FolderKanban, Plus, Search, Filter, 
   ChevronRight, Calendar, Users, Target, 
   AlertCircle, CheckCircle, Clock, X, LayoutGrid, CalendarDays,
-  ChevronLeft, Loader2
+  ChevronLeft, Loader2, PhoneCall, Video, UserPlus, Sparkles, Building2
 } from 'lucide-react';
-import { createProjectAction, getProjects } from '@/app/actions/projects';
+import { createProjectAction, getProjects, getMeetings } from '@/app/actions/projects';
 
 export default function ProjectsPage() {
   const [view, setView] = useState('calendar');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date(2026, 3, 1)); 
   const [projects, setProjects] = useState<any[]>([]);
+  const [meetings, setMeetings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -22,13 +23,14 @@ export default function ProjectsPage() {
   const [formData, setFormData] = useState({ name: '', budget: '', startDate: '2026-04-10' });
 
   useEffect(() => {
-    loadProjects();
+    loadData();
   }, []);
 
-  async function loadProjects() {
+  async function loadData() {
     setLoading(true);
-    const data = await getProjects();
-    setProjects(data);
+    const [pData, mData] = await Promise.all([getProjects(), getMeetings()]);
+    setProjects(pData);
+    setMeetings(mData);
     setLoading(false);
   }
 
@@ -37,7 +39,7 @@ export default function ProjectsPage() {
     setSubmitting(true);
     const res = await createProjectAction(formData);
     if (res.success) {
-       await loadProjects();
+       await loadData();
        setIsModalOpen(false);
        setFormData({ name: '', budget: '', startDate: '2026-04-10' });
     } else {
@@ -78,14 +80,14 @@ export default function ProjectsPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 flex-shrink-0">
         <div>
           <h1 className="text-4xl font-black text-brand-black tracking-tighter mb-1">Project Fleet</h1>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[9px]">Operational Control / {projects.length} Ventures</p>
+          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[8px]">Real-time Tracking / {projects.length} Entries</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex p-1 bg-white border border-black/[0.03] rounded-2xl shadow-premium-sm">
              <button onClick={() => setView('grid')} className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-[9px] font-black uppercase tracking-widest ${view === 'grid' ? 'bg-brand-black text-white' : 'text-gray-400'}`}><LayoutGrid size={14} /> Grid</button>
              <button onClick={() => setView('calendar')} className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-[9px] font-black uppercase tracking-widest ${view === 'calendar' ? 'bg-brand-black text-white' : 'text-gray-400'}`}><CalendarDays size={14} /> Schedule</button>
           </div>
-          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-3 px-6 py-3.5 bg-brand-black text-white rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-premium-xl hover:shadow-glow transition-all active:scale-95"><Plus size={16} className="text-brand-blue" /> New Venture</button>
+          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-3 px-6 py-3.5 bg-brand-black text-white rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-premium-xl hover:shadow-glow-blue transition-all active:scale-95"><Sparkles size={16} className="text-brand-blue" /> New Project</button>
         </div>
       </div>
 
@@ -99,7 +101,7 @@ export default function ProjectsPage() {
         ) : (
           <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 glass p-6 bg-white border-white shadow-premium-xl rounded-[2.5rem] flex flex-col overflow-hidden">
              
-             {/* Mini Calendar Header */}
+             {/* Calendar Header */}
              <div className="flex items-center justify-between mb-6 flex-shrink-0">
                 <div className="flex items-center gap-4">
                    <div className="flex bg-surface-soft p-1 rounded-xl border border-black/[0.01]">
@@ -108,7 +110,11 @@ export default function ProjectsPage() {
                    </div>
                    <p className="text-sm font-black text-brand-black uppercase tracking-widest">{currentDate.toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}</p>
                 </div>
-                {loading && <Loader2 className="animate-spin text-brand-blue" size={16} />}
+                <div className="flex items-center gap-4">
+                   <div className="flex items-center gap-2 text-[8px] font-black uppercase text-gray-400"><span className="w-2 h-2 rounded-full bg-brand-blue" /> Project</div>
+                   <div className="flex items-center gap-2 text-[8px] font-black uppercase text-gray-400"><span className="w-2 h-2 rounded-full bg-brand-pink" /> Call</div>
+                   {loading && <Loader2 className="animate-spin text-brand-blue ml-4" size={16} />}
+                </div>
              </div>
 
              <div className="flex-1 flex flex-col border border-black/[0.03] rounded-[2rem] overflow-hidden bg-white shadow-sm">
@@ -120,21 +126,26 @@ export default function ProjectsPage() {
 
                 <div className="flex-1 grid grid-cols-7 bg-black/[0.01] gap-[1px] min-h-0">
                    {calendarDays.map((date, i) => {
-                     const projectsOnDay = projects.filter(p => {
-                        const pDate = p.timeline?.split(' - ')?.[0] || p.timeline;
-                        return pDate === date.dateStr;
-                     });
+                     const projectsOnDay = projects.filter(p => (p.timeline?.split(' - ')?.[0] || p.timeline) === date.dateStr);
+                     const meetingsOnDay = meetings.filter(m => m.meeting_date === date.dateStr);
                      const isToday = new Date().toISOString().split('T')[0] === date.dateStr;
 
                      return (
                        <div key={i} className={`p-2 bg-white hover:bg-surface-soft/50 transition-all flex flex-col overflow-hidden ${!date.current ? 'bg-surface-soft/20 opacity-40' : ''}`}>
-                          <div className="flex items-center justify-between mb-1.5 flex-shrink-0">
+                          <div className="flex items-center justify-between mb-1 flex-shrink-0">
                              <span className={`text-[9px] font-black ${isToday ? 'w-5 h-5 bg-brand-black text-white rounded-lg flex items-center justify-center' : 'text-gray-300'}`}>{date.day}</span>
                           </div>
                           <div className="flex-1 overflow-y-auto space-y-1 no-scrollbar min-h-0">
+                             {/* Projects Display */}
                              {projectsOnDay.map(p => (
-                               <div key={p.id} className="p-1.5 bg-brand-blue text-white rounded-lg text-[7px] font-black uppercase tracking-tighter truncate shadow-sm">
-                                  {p.name}
+                               <div key={p.id} className="p-1.5 bg-brand-blue text-white rounded-lg text-[7px] font-black uppercase tracking-tighter truncate shadow-sm flex items-center gap-1.5 border border-white/10">
+                                  <Building2 size={8} /> {p.name}
+                               </div>
+                             ))}
+                             {/* Meetings Display */}
+                             {meetingsOnDay.map(m => (
+                               <div key={m.id} className="p-1 px-1.5 bg-brand-pink text-white rounded-lg text-[6px] font-black uppercase tracking-tighter truncate shadow-sm flex items-center gap-1.5 border border-white/10">
+                                  <Video size={8} /> {m.title}
                                </div>
                              ))}
                           </div>
@@ -182,21 +193,23 @@ export default function ProjectsPage() {
 }
 
 function ProjectCard({ project, delay }: { project: any, delay: number }) {
-  const completion = Math.min(100, Math.round((project.spent / (project.budget || 1)) * 100));
+  const completion = project.budget ? Math.min(100, Math.round((project.spent / project.budget) * 100)) : 0;
   return (
     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay }} className="glass p-6 bg-white border-white shadow-premium-lg flex flex-col h-fit group">
        <div className="flex items-start justify-between mb-6">
           <div className="w-10 h-10 rounded-xl bg-surface-soft flex items-center justify-center text-brand-black group-hover:bg-brand-black group-hover:text-white transition-all"><FolderKanban size={18} /></div>
-          <span className="text-[8px] font-black uppercase tracking-widest text-brand-blue px-2 py-1 bg-brand-blue/5 rounded-lg">Operational</span>
+          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg ${completion > 90 ? 'bg-red-50 text-brand-pink border border-red-100' : 'bg-green-50 text-green-600 border border-green-100'}`}>
+             {completion > 90 ? 'Critical' : 'Operational'}
+          </span>
        </div>
-       <h3 className="text-xl font-black text-brand-black tracking-tighter mb-4">{project.name}</h3>
+       <h3 className="text-lg font-black text-brand-black tracking-tighter mb-4">{project.name}</h3>
        <div className="flex-1 space-y-4">
-          <div className="w-full bg-surface-soft h-1.5 rounded-full overflow-hidden">
-             <motion.div initial={{ width: 0 }} animate={{ width: `${completion}%` }} className="h-full bg-brand-blue shadow-glow-blue" />
+          <div className="w-full bg-surface-soft h-1 rounded-full overflow-hidden">
+             <motion.div initial={{ width: 0 }} animate={{ width: `${completion}%` }} className={`h-full ${completion > 90 ? 'bg-brand-pink shadow-glow-pink' : 'bg-brand-blue shadow-glow-blue'}`} />
           </div>
-          <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest text-gray-400">
-             <span>Spent: ₹{(project.spent || 0).toLocaleString()}</span>
-             <span className="text-brand-black">Budget: ₹{(project.budget || 0).toLocaleString()}</span>
+          <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest text-gray-400">
+             <span>Status: Live</span>
+             <span className="text-brand-black">{completion}% Burn Rate</span>
           </div>
        </div>
     </motion.div>
