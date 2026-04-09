@@ -17,7 +17,6 @@ const VENDOR_NAV = [
   { name: 'Dashboard',  href: '/vendor/dashboard', icon: LayoutDashboard },
   { name: 'Payments',   href: '/vendor/payments',   icon: IndianRupee },
   { name: 'Documents',  href: '/vendor/documents',  icon: FileText },
-  { name: 'Meetings',   href: '/vendor/meetings',   icon: CalendarDays },
   { name: 'Support',    href: '/vendor/support',     icon: HelpCircle },
 ];
 

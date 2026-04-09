@@ -20,7 +20,6 @@ const NAV_ITEMS = [
   { name: 'Vendors',    href: '/user/vendors',   icon: Building2 },
   { name: 'Projects',   href: '/user/projects',  icon: FolderKanban },
   { name: 'Finance',    href: '/user/finance',    icon: Wallet },
-  { name: 'Meetings',   href: '/user/meetings',   icon: CalendarDays },
   { name: 'Onboarding', href: '/user/onboarding', icon: UserCheck },
   { name: 'Reports',    href: '/user/reports',    icon: FileBarChart, sub: 'Org Chart' },
 ];
@@ -260,7 +259,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 {chatHistory.map((chat, i) => (
                   <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`flex ${chat.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[85%] p-6 rounded-[2.2rem] shadow-premium-md border border-black/[0.02] ${chat.role === 'user' ? 'bg-brand-black text-white rounded-tr-none' : 'bg-white text-brand-black rounded-tl-none'}`}>
-                      <p className="text-[12px] font-bold leading-relaxed">{chat.text}</p>
+                      <p className="text-[12px] font-bold leading-relaxed whitespace-pre-wrap">{chat.text}</p>
                     </div>
                   </motion.div>
                 ))}

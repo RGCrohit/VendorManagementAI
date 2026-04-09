@@ -48,9 +48,6 @@ export default function AdminDashboard() {
           <button className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-black transition-all shadow-premium-sm active:scale-95">
              <Download size={16} /> Download Report
           </button>
-          <button className="flex items-center gap-2 px-6 py-3 bg-brand-black text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-premium-lg hover:shadow-glow-pink transition-all active:scale-95">
-             <Plus size={16} /> New Project
-          </button>
         </div>
       </div>
 

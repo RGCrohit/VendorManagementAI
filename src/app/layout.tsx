@@ -2,8 +2,9 @@ import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata = {
-  title: 'CureVendAI - Vendor & Project Management',
+  title: 'CureVendAI',
   description: 'AI-Powered Vendor & Project Management Platform',
+  icons: { icon: '/logo.png' },
 };
 
 export default function RootLayout({
