@@ -28,3 +28,329 @@
  GET /auth/callback 200 in 305ms
  ✓ Compiled in 216ms (1295 modules)
  GET /auth/callback 200 in 16ms
+ ✓ Compiled in 201ms (1281 modules)
+ ✓ Compiled in 212ms (1295 modules)
+ GET /auth/callback 200 in 23ms
+ ✓ Compiled in 109ms (644 modules)
+ GET /auth/callback 200 in 6ms
+ ✓ Compiled in 93ms (644 modules)
+ GET /auth/callback 200 in 6ms
+ ✓ Compiled in 219ms (1281 modules)
+ GET /?error=invalid_request&error_code=bad_oauth_state&error_description=OAuth+state+not+found+or+expired 200 in 96ms
+ ✓ Compiled /vendor/login in 348ms (1287 modules)
+ GET /vendor/login 200 in 373ms
+ ✓ Compiled /_not-found in 200ms (1290 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /_next/static/webpack/a9ddbf1c07101f2d.webpack.hot-update.json 404 in 233ms
+ GET /?error=invalid_request&error_code=bad_oauth_state&error_description=OAuth+state+not+found+or+expired 200 in 24ms
+ GET /vendor/login 200 in 19ms
+ GET / 200 in 35ms
+ ✓ Compiled in 302ms (1287 modules)
+ ✓ Compiled in 428ms (1281 modules)
+ GET / 200 in 231ms
+ GET / 200 in 5ms
+ GET / 200 in 5ms
+ GET / 200 in 5ms
+ GET / 200 in 4ms
+ ✓ Compiled in 255ms (1295 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 108ms (644 modules)
+ GET / 200 in 7ms
+ ✓ Compiled in 115ms (644 modules)
+ GET / 200 in 9ms
+ GET / 200 in 35ms
+ ✓ Compiled in 129ms (1281 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 95ms (644 modules)
+ GET / 200 in 9ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/rohit.chowdhury/Desktop/Antigravity_Fitathalon/VendorManagementAI/.next/cache/webpack/client-development/3.pack.gz_' -> '/Users/rohit.chowdhury/Desktop/Antigravity_Fitathalon/VendorManagementAI/.next/cache/webpack/client-development/3.pack.gz'
+ ✓ Compiled in 128ms (644 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 104ms (644 modules)
+ GET / 200 in 7ms
+ ✓ Compiled /user/login in 349ms (1287 modules)
+ GET /user/login 200 in 392ms
+ ✓ Compiled /_not-found in 135ms (1290 modules)
+ GET /auth/callback 404 in 175ms
+ GET /?error=invalid_request&error_code=bad_oauth_state&error_description=OAuth+state+not+found+or+expired 200 in 62ms
+ GET /vendor/login 200 in 29ms
+ ✓ Compiled /vendor/register in 317ms (1310 modules)
+ GET /vendor/register 200 in 340ms
+ GET /vendor/login 200 in 28ms
+ GET / 200 in 24ms
+ GET /user/login 200 in 24ms
+ GET /auth/callback 200 in 82ms
+ GET /_next/static/chunks/app/auth/callback/page.js 404 in 13ms
+ GET /auth/callback 200 in 28ms
+ GET /_next/static/chunks/app/auth/callback/page.js 404 in 12ms
+ GET /auth/callback 200 in 29ms
+ GET /_next/static/chunks/app/auth/callback/page.js 404 in 11ms
+ GET /auth/callback 200 in 32ms
+ GET /_next/static/chunks/app/auth/callback/page.js 404 in 10ms
+ ✓ Compiled in 278ms (1306 modules)
+ ✓ Compiled in 378ms (1307 modules)
+ ✓ Compiled in 172ms (650 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /auth/callback 200 in 67ms
+ ✓ Compiled in 128ms (1293 modules)
+ ✓ Compiled /vendor/portal in 193ms (1307 modules)
+ GET /vendor/portal 200 in 222ms
+ GET /vendor/portal 200 in 5ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 234ms (1321 modules)
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ GET /vendor/portal 500 in 166ms
+ ✓ Compiled in 119ms (656 modules)
+ GET /vendor/portal 200 in 2ms
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ GET /vendor/portal 500 in 20ms
+ ✓ Compiled in 98ms (656 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ GET /vendor/portal 500 in 22ms
+ ✓ Compiled in 98ms (656 modules)
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /vendor/portal 500 in 19ms
+ ✓ Compiled in 101ms (656 modules)
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /vendor/portal 500 in 16ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 367ms (1321 modules)
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ GET /vendor/portal 500 in 119ms
+ ✓ Compiled in 148ms (656 modules)
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /vendor/portal 500 in 20ms
+ ✓ Compiled in 183ms (656 modules)
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /vendor/portal 500 in 25ms
+ ⨯ src/app/vendor/portal/page.tsx (9:18) @ useRouter
+ ⨯ ReferenceError: useRouter is not defined
+    at VendorPortal (./src/app/vendor/portal/page.tsx:18:20)
+digest: "3240928259"
+[0m [90m  7 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mVendorPortal[39m() {[0m
+[0m [90m  8 |[39m   [36mconst[39m { user[33m,[39m profile[33m,[39m loading } [33m=[39m useAuth()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m  9 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m    |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m 10 |[39m[0m
+[0m [90m 11 |[39m   [36mconst[39m isKycComplete [33m=[39m profile[33m?[39m[33m.[39mgst_number [33m&&[39m profile[33m?[39m[33m.[39mpan_number [33m&&[39m profile[33m?[39m[33m.[39mbank_account[33m;[39m[0m
+[0m [90m 12 |[39m[0m
+ GET /vendor/portal 500 in 30ms
+ ✓ Compiled in 419ms (1323 modules)
+ ✓ Compiled in 101ms (657 modules)
+ ✓ Compiled in 239ms (1309 modules)
+ ✓ Compiled in 173ms (1323 modules)
+ ✓ Compiled in 220ms (1309 modules)
+ ✓ Compiled in 413ms (1347 modules)
+ ✓ Compiled in 166ms (669 modules)
+ ✓ Compiled in 279ms (1347 modules)
+ ✓ Compiled in 118ms (669 modules)
+ ✓ Compiled in 101ms (669 modules)
+ ✓ Compiled in 322ms (1347 modules)
+ ✓ Compiled in 149ms (669 modules)
+ ✓ Compiled in 215ms (1347 modules)
+ ✓ Compiled in 110ms (669 modules)
+ ✓ Compiled in 124ms (669 modules)
+ ✓ Compiled in 132ms (669 modules)
+ ✓ Compiled in 271ms (669 modules)
+ ✓ Compiled in 163ms (669 modules)
+ ✓ Compiled in 477ms (1333 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/rohit.chowdhury/Desktop/Antigravity_Fitathalon/VendorManagementAI/.next/cache/webpack/client-development/0.pack.gz_' -> '/Users/rohit.chowdhury/Desktop/Antigravity_Fitathalon/VendorManagementAI/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 143ms (669 modules)
+ ✓ Compiled in 91ms (1333 modules)
+ ✓ Compiled in 142ms (669 modules)
+ ✓ Compiled in 123ms (1333 modules)
+ ✓ Compiled in 130ms (669 modules)
+ ✓ Compiled in 115ms (1333 modules)
+ ✓ Compiled in 129ms (669 modules)
+ ✓ Compiled in 86ms (1333 modules)
+ ✓ Compiled in 116ms (669 modules)
+ ✓ Compiled in 84ms (1333 modules)
+ ✓ Compiled in 176ms (669 modules)
+ ✓ Compiled in 88ms (1333 modules)
+ ✓ Compiled in 266ms (669 modules)
+ ✓ Compiled in 151ms (669 modules)
+ ✓ Compiled in 116ms (1333 modules)
+ ✓ Compiled in 143ms (669 modules)
+ ✓ Compiled in 162ms (669 modules)
+ ✓ Compiled in 141ms (669 modules)
+ ✓ Compiled in 199ms (669 modules)
+ ✓ Compiled in 137ms (1333 modules)
+ ✓ Compiled in 312ms (1333 modules)
+ GET /?error=invalid_request&error_code=bad_oauth_state&error_description=OAuth+state+not+found+or+expired 200 in 93ms
+ GET /vendor/login 200 in 27ms
+ ✓ Compiled /user/login in 441ms (1360 modules)
+ GET /user/login 200 in 484ms
+ ✓ Compiled /_not-found in 156ms (1363 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /_next/static/webpack/d34dd5bb9fffbdbf.webpack.hot-update.json 404 in 245ms
+ GET /user/login 200 in 146ms
+ GET /?error=invalid_request&error_code=bad_oauth_state&error_description=OAuth+state+not+found+or+expired 200 in 31ms
+ GET /user/login 200 in 12ms
+ ✓ Compiled /user/register in 173ms (1373 modules)
+ GET /user/register 200 in 194ms
+ GET /user/login 200 in 32ms
+ GET /auth/callback 200 in 78ms
+ GET /vendor/portal 200 in 17ms
+ GET /vendor/portal 200 in 6ms
+ ✓ Compiled /vendor/portal/kyc in 409ms (1385 modules)
+ GET /vendor/portal/kyc 200 in 441ms
+ GET /vendor/portal 200 in 30ms
+ ✓ Compiled / in 92ms (702 modules)
+ GET / 200 in 146ms
+ GET /user/login 200 in 21ms
+ GET /?error=invalid_request&error_code=bad_oauth_state&error_description=OAuth+state+not+found+or+expired 200 in 55ms
+ GET /?error=invalid_request&error_code=bad_oauth_state&error_description=OAuth+state+not+found+or+expired 200 in 61ms
+   Reload env: .env.local
+ ✓ Compiled in 226ms (1376 modules)
