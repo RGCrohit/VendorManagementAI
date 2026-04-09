@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/auth/supabase';
 import {
   CreditCard, BadgeCheck, Banknote, ShieldCheck,
-  AlertCircle, Loader2, Save, ArrowLeft
+  AlertCircle, Loader2, Save, ArrowLeft, Building2
 } from 'lucide-react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 export default function VendorKYC() {
   const router = useRouter();
@@ -55,7 +56,7 @@ export default function VendorKYC() {
       }
     } catch (err) {
       console.error('Error fetching KYC:', err);
-      setError('Could not load KYC data');
+      // Don't show error if no profile yet, just stop loading
     } finally {
       setLoading(false);
     }
@@ -96,163 +97,162 @@ export default function VendorKYC() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-navy text-white flex items-center justify-center">
-        <Loader2 className="animate-spin text-primary-blue" size={32} />
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <Loader2 className="animate-spin text-brand-blue" size={32} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-dark-navy text-white py-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        <Link href="/vendor/portal" className="flex items-center gap-2 text-gray-400 hover:text-white transition mb-8 group w-fit">
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          Back to Portal
-        </Link>
+    <div className="min-h-screen bg-surface-soft py-12 px-4 font-sans">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-10">
+          <Link href="/vendor/dashboard" className="flex items-center gap-2 text-gray-400 hover:text-brand-black transition group text-xs font-black uppercase tracking-widest">
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            Back to Dashboard
+          </Link>
+          <div className="flex items-center gap-2">
+             <Building2 size={24} className="text-brand-blue" />
+             <span className="text-xl font-black text-brand-black tracking-tighter uppercase">CureVendAI</span>
+          </div>
+        </div>
 
-        <div className="glass p-8 md:p-10 rounded-2xl">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-blue to-primary-violet bg-clip-text text-transparent">
-              KYC Document Portal
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass p-8 md:p-12 rounded-[3rem] bg-white border-white shadow-premium-xl"
+        >
+          <div className="mb-12">
+            <h1 className="text-4xl font-black text-brand-black tracking-tighter mb-4">
+              KYC Verification
             </h1>
-            <p className="text-gray-400 mt-2">Complete your profile to enable full platform features.</p>
+            <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Complete your profile to enable payments & project access</p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3 text-red-300 text-sm">
-              <AlertCircle size={18} className="flex-shrink-0" /> {error}
+            <div className="mb-8 p-6 bg-red-50 border border-red-100 rounded-3xl flex items-start gap-4 text-brand-pink text-xs font-bold uppercase tracking-wide">
+              <AlertCircle size={20} className="flex-shrink-0" /> {error}
             </div>
           )}
 
           {success && (
-            <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg flex items-start gap-3 text-green-300 text-sm">
-              <BadgeCheck size={18} className="flex-shrink-0" /> KYC details updated successfully!
+            <div className="mb-8 p-6 bg-green-50 border border-green-100 rounded-3xl flex items-start gap-4 text-green-600 text-xs font-bold uppercase tracking-wide">
+              <BadgeCheck size={20} className="flex-shrink-0" /> KYC details updated successfully!
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
-            {/* GST */}
+          <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-8">
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-300">GST Number</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">GST Number</label>
               <div className="relative">
-                <BadgeCheck className="absolute left-3 top-3 text-gray-500" size={18} />
+                <BadgeCheck className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                 <input
                   type="text"
                   name="gst_number"
                   value={formData.gst_number}
                   onChange={handleInputChange}
                   placeholder="27AAPCT1234H1Z5"
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:border-primary-blue transition text-sm uppercase"
-                  pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
+                  className="w-full pl-14 pr-6 py-4 bg-surface-soft border border-transparent rounded-[1.5rem] text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/5 outline-none transition uppercase"
                 />
               </div>
             </div>
 
-            {/* PAN */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-300">PAN Number</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">PAN Number</label>
               <div className="relative">
-                <CreditCard className="absolute left-3 top-3 text-gray-500" size={18} />
+                <CreditCard className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                 <input
                   type="text"
                   name="pan_number"
                   value={formData.pan_number}
                   onChange={handleInputChange}
                   placeholder="AAPCT1234H"
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:border-primary-blue transition text-sm uppercase"
-                  pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$"
+                  className="w-full pl-14 pr-6 py-4 bg-surface-soft border border-transparent rounded-[1.5rem] text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/5 outline-none transition uppercase"
                 />
               </div>
             </div>
 
-            {/* Bank Name */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-300">Bank Name</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Bank Name</label>
               <div className="relative">
-                <Banknote className="absolute left-3 top-3 text-gray-500" size={18} />
+                <Banknote className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                 <input
                   type="text"
                   name="bank_name"
                   value={formData.bank_name}
                   onChange={handleInputChange}
-                  placeholder="HDFC Bank"
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:border-primary-blue transition text-sm"
+                  placeholder="e.g. HDFC Bank"
+                  className="w-full pl-14 pr-6 py-4 bg-surface-soft border border-transparent rounded-[1.5rem] text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/5 outline-none transition"
                 />
               </div>
             </div>
 
-            {/* IFSC Code */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-300">IFSC Code</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">IFSC Code</label>
               <div className="relative">
-                <CreditCard className="absolute left-3 top-3 text-gray-500" size={18} />
+                <CreditCard className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                 <input
                   type="text"
                   name="ifsc_code"
                   value={formData.ifsc_code}
                   onChange={handleInputChange}
                   placeholder="HDFC0001234"
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:border-primary-blue transition text-sm uppercase"
-                  pattern="^[A-Z]{4}0[A-Z0-9]{6}$"
+                  className="w-full pl-14 pr-6 py-4 bg-surface-soft border border-transparent rounded-[1.5rem] text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/5 outline-none transition uppercase"
                 />
               </div>
             </div>
 
-            {/* Bank Account */}
             <div className="space-y-2 md:col-span-2">
-              <label className="block text-sm font-medium text-gray-300">Bank Account Number</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Bank Account Number</label>
               <div className="relative">
-                <Banknote className="absolute left-3 top-3 text-gray-500" size={18} />
+                <Banknote className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                 <input
                   type="text"
                   name="bank_account"
                   value={formData.bank_account}
                   onChange={handleInputChange}
                   placeholder="50100012345678"
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:border-primary-blue transition text-sm"
-                  pattern="^[0-9]{9,18}$"
+                  className="w-full pl-14 pr-6 py-4 bg-surface-soft border border-transparent rounded-[1.5rem] text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/5 outline-none transition"
                 />
               </div>
             </div>
 
-            {/* Aadhar */}
             <div className="space-y-2 md:col-span-2">
-              <label className="block text-sm font-medium text-gray-300">Aadhar Number (Last 12 digits)</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Aadhar Number (12 Digits)</label>
               <div className="relative">
-                <ShieldCheck className="absolute left-3 top-3 text-gray-500" size={18} />
+                <ShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                 <input
                   type="text"
                   name="aadhar_number"
                   value={formData.aadhar_number}
                   onChange={handleInputChange}
-                  placeholder="123456789012"
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:border-primary-blue transition text-sm"
-                  pattern="^[0-9]{12}$"
+                  placeholder="1234 5678 9012"
+                  className="w-full pl-14 pr-6 py-4 bg-surface-soft border border-transparent rounded-[1.5rem] text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/5 outline-none transition"
                 />
               </div>
             </div>
 
-            <div className="md:col-span-2 mt-4">
+            <div className="md:col-span-2 mt-10">
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full py-3 bg-gradient-to-r from-primary-blue to-primary-violet rounded-lg font-semibold hover:shadow-glow transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-5 bg-brand-black text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-premium-lg hover:shadow-glow-pink transition-all disabled:opacity-50 flex items-center justify-center gap-3 active:scale-95"
               >
-                {saving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+                {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                 Save KYC Details
               </button>
             </div>
           </form>
 
-          <div className="mt-8 p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
-            <h4 className="text-yellow-400 text-sm font-semibold mb-1 flex items-center gap-2">
-              <ShieldCheck size={16} /> Data Security
+          <div className="mt-12 p-8 bg-blue-50/30 rounded-[2rem] border border-blue-100/50">
+            <h4 className="text-brand-blue text-[10px] font-black uppercase tracking-widest mb-3 flex items-center gap-2">
+              <ShieldCheck size={16} /> Data Protection & Security
             </h4>
-            <p className="text-xs text-gray-400">
-              Your KYC information is encrypted and only accessible to authorized Scrum Masters for verification. We do not share your bank or identity details with other users.
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight leading-relaxed">
+              Your sensitive data is encrypted at rest. CureVendAI uses bank-grade security to ensure your personal and financial identifiers are never exposed to unauthorized entities.
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -8,44 +8,65 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
  * CureVendAI Assistant — queries real Supabase data and uses Gemini for intelligence.
  */
 export async function queryCureVendAI(prompt: string) {
+  const q = prompt.toLowerCase().trim();
+  
   try {
-    // 1. Fetch relevant data for context
-    const { data: vendors } = await supabase.from('vendors').select('*');
-    const { data: projects } = await supabase.from('projects').select('*');
-    const { data: payments } = await supabase.from('payments').select('amount, status, description, invoice_date');
+    // 1. Handle simple greetings locally for extreme speed
+    const greetings = ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening'];
+    if (greetings.includes(q)) {
+      return `Hi there! I'm your CureVendAI assistant. How can I help you today? You can ask me for a summary of your vendors, projects, or payments.`;
+    }
 
-    // 2. Format context for Gemini
-    const context = `
-      You are the CureVendAI Assistant, a friendly and professional project management helper. 
-      Your goal is to answer questions about the user's vendors, projects, and payments in simple, easy-to-understand language.
-      Avoid jargon like "compliance node" or "fidelity sync".
-      
-      Current Data:
-      - Vendors: ${JSON.stringify(vendors || [])}
-      - Projects: ${JSON.stringify(projects || [])}
-      - Payments: ${JSON.stringify(payments || [])}
-      
-      Instructions:
-      - If the user asks for a summary, provide a clear overview with bullet points.
-      - If they ask about a specific vendor or project, look it up in the data above.
-      - If the data is empty, mention that no records were found yet.
-      - Be helpful, conversational, and use emojis where appropriate.
-      - Never mention technical details like JSON or SQL.
+    // 2. Decide if we need data context
+    let dataContext = '';
+    const needsData = q.includes('summary') || q.includes('project') || q.includes('vendor') || q.includes('payment') || q.includes('spend') || q.includes('money');
+    
+    if (needsData) {
+      // Fetch relevant data FOR context
+      const [{ data: vendors }, { data: projects }, { data: payments }] = await Promise.all([
+        supabase.from('vendors').select('*'),
+        supabase.from('projects').select('*'),
+        supabase.from('payments').select('amount, status, description, invoice_date')
+      ]);
+
+      dataContext = `
+        Current System Data (Context):
+        - Vendors: ${JSON.stringify(vendors || [])}
+        - Projects: ${JSON.stringify(projects || [])}
+        - Payments: ${JSON.stringify(payments || [])}
+      `;
+    }
+
+    // 3. Prepare the final prompt
+    const systemInstructions = `
+      You are the CureVendAI Assistant. 
+      Speak in a simple, friendly, and professional business tone.
+      NEVER use technical jargon.
+      When providing data summaries, use clean bullet points.
+      If context is missing, don't make up numbers. Just say you don't have that data yet.
     `;
 
-    // 3. Generate response with Gemini
-    const result = await model.generateContent([context, prompt]);
-    const response = await result.response;
-    return response.text();
-
-  } catch (error) {
-    console.error('AI Agent Error:', error);
-    
-    // Fallback to simple hardcoded logic if Gemini fails
-    const q = prompt.toLowerCase();
-    if (q.includes('summary')) {
-       return "I'm having a bit of trouble reaching my AI brain right now, but I can see you have some projects and vendors active. Try again in a moment!";
+    // 4. Generate response
+    if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+      return "I need a Gemini API key to function. Please add NEXT_PUBLIC_GEMINI_API_KEY to your env vars.";
     }
-    return "Something went wrong while processing your request. Please check your Gemini API key or try again later.";
+
+    const result = await model.generateContent([
+      { text: systemInstructions },
+      { text: dataContext || "No live data context provided for this query." },
+      { text: prompt }
+    ]);
+    
+    const response = await result.response;
+    const text = response.text();
+    
+    return text || "I understood your request but couldn't generate a clear answer. Could you rephrase?";
+
+  } catch (error: any) {
+    console.error('AI Agent Error:', error);
+    if (error.message?.includes('API_KEY_INVALID')) {
+      return "The Gemini API key provided is invalid. Please check your configuration.";
+    }
+    return "I'm having trouble accessing my intelligence right now. Please try again in a few moments.";
   }
 }

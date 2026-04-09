@@ -62,7 +62,11 @@ export async function signInWithGoogle(role: string = 'VENDOR') {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      queryParams: { access_type: 'offline', prompt: 'consent' },
+      scopes: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/calendar.events',
+      queryParams: { 
+        access_type: 'offline', 
+        prompt: 'consent' 
+      },
       redirectTo: `${window.location.origin}/auth/callback?intended_role=${role}`,
     },
   });
