@@ -3,10 +3,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  FolderKanban, Plus, Search, Filter, 
-  ChevronRight, Calendar, Users, Target, 
-  AlertCircle, CheckCircle, Clock, X, LayoutGrid, CalendarDays,
-  ChevronLeft, Loader2, PhoneCall, Video, UserPlus, Sparkles, Building2
+  FolderKanban, Plus, 
+  ChevronRight, LayoutGrid, CalendarDays,
+  ChevronLeft, Loader2, Video, Sparkles, Building2
 } from 'lucide-react';
 import { createProjectAction, getProjects, getMeetings } from '@/app/actions/projects';
 

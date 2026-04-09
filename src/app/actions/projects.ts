@@ -7,7 +7,7 @@ export async function createProjectAction(formData: { name: string, budget: stri
   try {
     // For FITATHALON DEMO: We will try to get user, but if it fails we check if we can at least insert.
     // In production, you'd use @supabase/ssr setSession.
-    const { data: { user } } = await supabase.auth.getUser();
+    await supabase.auth.getUser();
     
     const { error } = await supabase.from('projects').insert({
       name: formData.name,
