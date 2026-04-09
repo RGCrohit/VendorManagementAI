@@ -55,16 +55,9 @@ export async function queryCureVendAI(prompt: string) {
     `;
 
     // 4. Generate response
-    if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
-      return "I need a Gemini API key to function. Please add NEXT_PUBLIC_GEMINI_API_KEY to your env vars.";
-    }
+    const fullPrompt = `${systemInstructions}\n\nContext Data:\n${dataContext || "No live data available."}\n\nUser Query: ${prompt}`;
 
-    const result = await model.generateContent([
-      { text: systemInstructions },
-      { text: dataContext || "No live data context provided for this query." },
-      { text: prompt }
-    ]);
-    
+    const result = await model.generateContent(fullPrompt);
     const response = await result.response;
     const text = response.text();
     
