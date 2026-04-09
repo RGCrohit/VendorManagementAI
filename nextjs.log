@@ -1,0 +1,30 @@
+
+> procurai@1.0.0 dev
+> next dev
+
+  ▲ Next.js 15.0.0
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1188ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1034ms (1184 modules)
+ GET / 200 in 1177ms
+ ✓ Compiled in 78ms (589 modules)
+ ✓ Compiled /pm/login in 261ms (1273 modules)
+ GET /pm/login 200 in 327ms
+ HEAD / 200 in 43ms
+ GET / 200 in 18ms
+ GET /pm/login 200 in 9ms
+ GET /pm/login 200 in 52ms
+ GET /pm/login 200 in 19ms
+ GET / 200 in 14ms
+ GET /pm/login 200 in 15ms
+ GET /pm/login 200 in 30ms
+ GET / 200 in 12ms
+ GET /pm/login 200 in 9ms
+ ✓ Compiled /auth/callback in 266ms (1281 modules)
+ GET /auth/callback 200 in 305ms
+ ✓ Compiled in 216ms (1295 modules)
+ GET /auth/callback 200 in 16ms
