@@ -1,173 +1,200 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  IndianRupee, ShieldCheck, Clock, FileText, 
-  ArrowUpRight, Download, Eye, AlertCircle, TrendingUp,
-  ScanLine, Loader2, CheckCircle
+  IndianRupee, Clock, FileText, 
+  ArrowUpRight, ArrowDownRight, Download, 
+  CheckCircle, AlertCircle, TrendingUp, Calendar,
+  ChevronRight
 } from 'lucide-react';
-
-const STATS = [
-  { label: 'Total Settled Amount', value: '₹42.8L', icon: IndianRupee, color: 'text-green-500', bg: 'bg-green-50' },
-  { label: 'Pending Dues', value: '₹12.4L', icon: Clock, color: 'text-brand-pink', bg: 'bg-brand-pink/5' },
-  { label: 'Compliance Score', value: '98%', icon: ShieldCheck, color: 'text-brand-blue', bg: 'bg-brand-blue/5' },
-];
-
-const RECENT_PAYMENTS = [
-  { id: 'PAY-8821', name: 'Infrastructure Maintenance', amount: '₹4,50,000', date: 'Oct 12, 2025', status: 'settled' },
-  { id: 'PAY-8805', name: 'Cloud Hub Sync Fee', amount: '₹2,10,000', date: 'Sep 28, 2025', status: 'settled' },
-];
+import { supabase } from '@/lib/auth/supabase';
 
 export default function VendorDashboard() {
-  const [isScanning, setIsScanning] = useState(false);
-  const [scanComplete, setScanComplete] = useState(false);
+  const [payments, setPayments] = useState<any[]>([]);
+  const [meetings, setMeetings] = useState<any[]>([]);
 
-  const triggerOCR = () => {
-    setIsScanning(true);
-    setTimeout(() => {
-      setIsScanning(false);
-      setScanComplete(true);
-      setTimeout(() => setScanComplete(false), 3000);
-    }, 4000);
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    const { data: payData } = await supabase
+      .from('payments')
+      .select('*')
+      .order('invoice_date', { ascending: false })
+      .limit(5);
+    if (payData) setPayments(payData);
+
+    const { data: meetData } = await supabase
+      .from('meetings')
+      .select('*')
+      .gte('meeting_date', new Date().toISOString().split('T')[0])
+      .order('meeting_date', { ascending: true })
+      .limit(3);
+    if (meetData) setMeetings(meetData);
   };
 
-  return (
-    <div className="space-y-10">
-      
-      {/* Welcome & Quick OCR */}
-      <div className="grid lg:grid-cols-3 gap-10">
-         <div className="lg:col-span-2 space-y-8">
-            <div className="flex flex-col gap-2">
-               <h1 className="text-4xl font-black text-slate-800 tracking-tighter">Partner Dashboard</h1>
-               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Real-time governance & fiscal synchronization</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               {STATS.map((stat, i) => (
-                 <motion.div 
-                    key={stat.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm hover:shadow-lg transition-all group"
-                 >
-                    <div className={`w-12 h-12 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                       <stat.icon size={24} />
-                    </div>
-                    <p className="text-3xl font-black text-slate-800 tracking-tight mb-1">{stat.value}</p>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-tight">{stat.label}</p>
-                 </motion.div>
-               ))}
-            </div>
-         </div>
+  const totalPaid = payments.filter(p => p.status === 'paid').reduce((s, p) => s + Number(p.amount), 0);
+  const totalPending = payments.filter(p => p.status === 'pending').reduce((s, p) => s + Number(p.amount), 0);
 
-         <div className="glass p-10 bg-brand-black text-white rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col justify-between">
-            <div className="absolute top-0 right-0 p-10 opacity-10"><ScanLine size={120} /></div>
-            <div className="relative z-10">
-               <h3 className="text-xl font-black tracking-tight mb-4 text-brand-blue uppercase">Neural OCR Sync</h3>
-               <p className="text-[11px] font-medium text-slate-400 leading-relaxed uppercase tracking-tighter">
-                  Upload Invoices or Compliance Master Docs. Our AI engine will automatically extract and synchronize the data with the CureVend HQ Ledger.
-               </p>
-            </div>
-            
-            <div className="relative z-10 mt-10">
-               {isScanning ? (
-                 <div className="space-y-4">
-                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-brand-blue animate-pulse">
-                       <span>Scanning Telemetry...</span>
-                       <span>84%</span>
-                    </div>
-                    <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                       <motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 4 }} className="h-full bg-brand-blue shadow-glow-blue" />
-                    </div>
-                 </div>
-               ) : scanComplete ? (
-                 <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex items-center gap-4 p-5 bg-green-500/10 border border-green-500/20 rounded-2xl text-green-500 mb-2">
-                    <CheckCircle size={24} />
-                    <div className="text-left">
-                       <p className="text-xs font-black uppercase tracking-widest">Doc Verified</p>
-                       <p className="text-[9px] font-bold">Registry Synced Successfully</p>
-                    </div>
-                 </motion.div>
-               ) : (
-                 <button 
-                  onClick={triggerOCR}
-                  className="w-full py-5 bg-white text-brand-black rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-brand-blue hover:text-white transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3"
-                 >
-                    <FileText size={18} /> Upload Governance Doc
-                 </button>
-               )}
-            </div>
-         </div>
+  const STATS = [
+    { label: 'Amount Received', value: `₹${(totalPaid / 100000).toFixed(1)}L`, icon: IndianRupee, color: 'text-brand-blue', bg: 'bg-brand-blue/10', change: '+12%', up: true },
+    { label: 'Pending Payments', value: `₹${(totalPending / 100000).toFixed(1)}L`, icon: Clock, color: 'text-brand-pink', bg: 'bg-brand-pink/10', change: `${payments.filter(p => p.status === 'pending').length} invoices`, up: false },
+    { label: 'Total Invoices', value: `${payments.length}`, icon: FileText, color: 'text-brand-yellow', bg: 'bg-brand-yellow/10', change: 'Last 6 months', up: true },
+  ];
+
+  return (
+    <div className="space-y-8 animate-slide-in">
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-4xl font-black text-brand-black tracking-tighter mb-2">Dashboard</h1>
+          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Your payment history, documents & upcoming meetings</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-black transition-all shadow-premium-sm active:scale-95">
+             <Download size={16} /> Download Statement
+          </button>
+        </div>
       </div>
 
-      {/* Ledger Table */}
-      <div className="p-10 bg-white border border-slate-200 rounded-[3rem] shadow-sm">
-         <div className="flex items-center justify-between mb-10">
-            <div>
-               <h2 className="text-2xl font-black text-slate-800 tracking-tighter">Recent Settlements</h2>
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Status of your recent fiscal disbursements</p>
-            </div>
-            <button className="flex items-center gap-2 text-[10px] font-black text-brand-blue uppercase tracking-widest hover:underline decoration-2">
-               View Full Ledger <ArrowUpRight size={14} />
-            </button>
-         </div>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {STATS.map((stat, i) => {
+          const Icon = stat.icon;
+          return (
+            <motion.div 
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -5 }}
+              className="glass p-6 border-white bg-white/40 group cursor-pointer"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className={`p-3 rounded-2xl ${stat.bg} shadow-premium-sm group-hover:scale-110 transition-transform`}>
+                  <Icon size={20} className={stat.color} />
+                </div>
+                <div className={`flex items-center gap-1 text-[10px] font-black uppercase ${stat.up ? 'text-brand-blue' : 'text-brand-pink'}`}>
+                  {stat.up ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                  {stat.change}
+                </div>
+              </div>
+              <p className="text-3xl font-black text-brand-black mb-1">{stat.value}</p>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</p>
+            </motion.div>
+          );
+        })}
+      </div>
 
-         <div className="overflow-x-auto">
-            <table className="w-full">
-               <thead>
-                  <tr className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
-                     <th className="px-6 py-4 text-left">Transaction ID</th>
-                     <th className="px-6 py-4 text-left">Internal Reference</th>
-                     <th className="px-6 py-4 text-left">Amount Paid</th>
-                     <th className="px-6 py-4 text-left">Date Sync</th>
-                     <th className="px-6 py-4 text-right">Audit Docs</th>
+      {/* Recent Payments + Upcoming Meetings */}
+      <div className="grid lg:grid-cols-3 gap-8">
+        
+        {/* Payments Table */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="lg:col-span-2 glass p-8 border-white bg-white/60 shadow-premium-lg"
+        >
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-xl font-black text-brand-black tracking-tight">Recent Payments</h2>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Your latest payment activity</p>
+            </div>
+            <button className="flex items-center gap-1.5 text-[10px] font-black text-brand-blue uppercase tracking-widest hover:underline decoration-2">
+               View All <ArrowUpRight size={12} />
+            </button>
+          </div>
+
+          {payments.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] border-b border-black/[0.03]">
+                    <th className="px-4 py-3 text-left">Invoice</th>
+                    <th className="px-4 py-3 text-left">Amount</th>
+                    <th className="px-4 py-3 text-left">Date</th>
+                    <th className="px-4 py-3 text-left">Status</th>
                   </tr>
-               </thead>
-               <tbody className="divide-y divide-slate-50">
-                  {RECENT_PAYMENTS.map((pay) => (
-                    <tr key={pay.id} className="group hover:bg-slate-50 transition-colors">
-                       <td className="px-6 py-6 text-xs font-black text-brand-blue">{pay.id}</td>
-                       <td className="px-6 py-6 text-xs font-bold text-slate-600 uppercase tracking-tighter">{pay.name}</td>
-                       <td className="px-6 py-6">
-                          <p className="text-xs font-black text-slate-800">{pay.amount}</p>
-                       </td>
-                       <td className="px-6 py-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{pay.date}</td>
-                       <td className="px-6 py-6 text-right">
-                          <button className="p-2.5 bg-slate-100 rounded-xl text-slate-400 hover:text-brand-blue hover:bg-white transition shadow-sm border border-transparent hover:border-slate-100">
-                             <Download size={18} />
-                          </button>
-                       </td>
+                </thead>
+                <tbody className="divide-y divide-black/[0.02]">
+                  {payments.map((pay) => (
+                    <tr key={pay.id} className="group hover:bg-surface-soft transition-colors">
+                      <td className="px-4 py-5 text-xs font-black text-brand-black">{pay.description || 'Invoice'}</td>
+                      <td className="px-4 py-5 text-xs font-black text-brand-black">₹{Number(pay.amount).toLocaleString()}</td>
+                      <td className="px-4 py-5 text-[10px] font-bold text-gray-400">{new Date(pay.invoice_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                      <td className="px-4 py-5">
+                        <span className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                          pay.status === 'paid' ? 'bg-green-50 text-green-600 ring-1 ring-green-100' : 'bg-amber-50 text-amber-600 ring-1 ring-amber-100'
+                        }`}>
+                          {pay.status}
+                        </span>
+                      </td>
                     </tr>
                   ))}
-               </tbody>
-            </table>
-         </div>
-      </div>
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <FileText size={40} className="text-gray-200 mx-auto mb-4" />
+              <p className="text-sm text-gray-400">No payment records yet</p>
+              <p className="text-[10px] text-gray-300 mt-1">Payments will appear here once your invoices are processed</p>
+            </div>
+          )}
+        </motion.div>
 
-      {/* Compliance / Support */}
-      <div className="grid md:grid-cols-2 gap-8">
-         <div className="p-10 bg-blue-50/30 border border-blue-100 rounded-[2.5rem] flex items-start gap-6">
-             <AlertCircle size={32} className="text-brand-blue" />
-             <div>
-                <h4 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-2">Automated Compliance Monitoring</h4>
-                <p className="text-[10px] font-medium text-slate-500 leading-relaxed uppercase tracking-tighter">
-                   Your node is currenty performing at **98% fidelity**. Maintain regular doc uploads to avoid flagging by the HQ Governor.
-                </p>
-             </div>
-         </div>
-         <div className="p-10 bg-slate-100/50 border border-slate-200 rounded-[2.5rem] flex items-start gap-6">
-             <TrendingUp size={32} className="text-slate-400" />
-             <div>
-                <h4 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-2">Market Sentiment Sync</h4>
-                <p className="text-[10px] font-medium text-slate-500 leading-relaxed uppercase tracking-tighter">
-                   Performance benchmarking against regional sector leaders is now available in your deep-insights tab.
-                </p>
-             </div>
-         </div>
-      </div>
+        {/* Upcoming Meetings */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.5 }}
+          className="glass p-8 border-white bg-white/60 shadow-premium-lg flex flex-col"
+        >
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-xl font-black text-brand-black tracking-tight">Upcoming</h2>
+            <Calendar size={20} className="text-brand-pink" />
+          </div>
 
+          <div className="flex-1 space-y-4">
+            {meetings.length === 0 ? (
+              <div className="text-center py-10">
+                <Calendar size={32} className="text-gray-200 mx-auto mb-3" />
+                <p className="text-sm text-gray-400">No upcoming meetings</p>
+              </div>
+            ) : (
+              meetings.map(m => (
+                <div key={m.id} className="p-4 rounded-2xl bg-surface-soft border border-black/[0.02] hover:bg-white transition-all group shadow-sm">
+                  <p className="text-sm font-black text-brand-black group-hover:text-brand-blue transition mb-2 leading-snug">{m.title}</p>
+                  <div className="flex items-center gap-3 text-[10px] font-bold text-gray-400">
+                    <span className="flex items-center gap-1"><Calendar size={11} /> {new Date(m.meeting_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+                    {m.meeting_time && <span className="flex items-center gap-1"><Clock size={11} /> {m.meeting_time}</span>}
+                  </div>
+                  {m.meeting_link && (
+                    <a href={m.meeting_link} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 text-[10px] font-black text-brand-blue uppercase tracking-widest hover:underline">
+                      Join Meeting <ArrowUpRight size={12} />
+                    </a>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Quick Help */}
+          <div className="mt-6 p-5 rounded-2xl bg-brand-blue/5 border border-brand-blue/10">
+            <div className="flex items-start gap-3">
+              <AlertCircle size={16} className="text-brand-blue mt-0.5" />
+              <div>
+                <p className="text-[10px] font-black text-brand-black uppercase tracking-widest mb-1">Need Help?</p>
+                <p className="text-[10px] text-gray-400 leading-relaxed">Contact your project manager or reach out via the Support page for any queries.</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
