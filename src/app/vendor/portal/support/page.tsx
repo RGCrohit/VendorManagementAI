@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  HelpCircle, MessageSquare, Ticket, 
-  Send, Search, Plus, Loader2, Sparkles,
-  CheckCircle, Clock, AlertCircle, Building2,
-  ChevronRight, Headset
+  MessageSquare, Ticket, 
+  Send, Plus, Loader2, Sparkles,
+  Clock, AlertCircle, Building2,
+  ChevronRight, Headphones
 } from 'lucide-react';
 
 const MOCK_TICKETS = [
@@ -71,7 +71,7 @@ export default function VendorSupport() {
                     {/* Chat Header */}
                     <div className="px-8 py-6 border-b border-black/[0.03] flex items-center justify-between">
                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-2xl bg-brand-blue shadow-glow-blue flex items-center justify-center text-white"><Headset size={20} /></div>
+                          <div className="w-10 h-10 rounded-2xl bg-brand-blue shadow-glow-blue flex items-center justify-center text-white"><Headphones size={20} /></div>
                           <div>
                              <h3 className="text-sm font-black text-brand-black uppercase tracking-widest leading-none">AI Support Terminal</h3>
                              <p className="text-[9px] font-bold text-green-500 uppercase tracking-widest mt-1">Operational • Active Response Mode</p>

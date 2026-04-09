@@ -333,7 +333,7 @@ export default function VendorPortal() {
                     </thead>
                     <tbody>
                       {projects.map((p) => {
-                        const tat = tatStatusConfig[p.tat_status];
+                        const tat = tatStatusConfig[p.tat_status as TatStatus];
                         return (
                           <tr key={p.id} className="border-b border-white/5 hover:bg-white/5 transition">
                             <td className="px-6 py-4 font-medium">{p.name}</td>
@@ -393,7 +393,7 @@ export default function VendorPortal() {
                     </thead>
                     <tbody>
                       {invoices.map(inv => {
-                        const status = invoiceStatusConfig[inv.status];
+                        const status = invoiceStatusConfig[inv.status as InvoiceStatus];
                         return (
                           <tr key={inv.id} className="border-b border-white/5 hover:bg-white/5 transition">
                             <td className="px-6 py-4 font-mono text-xs text-primary-blue">{inv.id}</td>
@@ -452,12 +452,12 @@ export default function VendorPortal() {
                           <td className="px-6 py-4 font-medium">{t.subject}</td>
                           <td className="px-6 py-4 text-gray-400">{t.project}</td>
                           <td className="px-6 py-4">
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${ticketPriorityConfig[t.priority]}`}>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${ticketPriorityConfig[t.priority as TicketPriority]}`}>
                               {t.priority}
                             </span>
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${ticketStatusConfig[t.status]}`}>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${ticketStatusConfig[t.status as TicketStatus]}`}>
                               {t.status.replace('_', ' ')}
                             </span>
                           </td>
