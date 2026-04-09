@@ -1,35 +1,57 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FolderKanban, Plus, Search, Filter, 
   ChevronRight, Calendar, Users, Target, 
   AlertCircle, CheckCircle, Clock, X, LayoutGrid, CalendarDays,
-  ChevronLeft
+  ChevronLeft, Loader2
 } from 'lucide-react';
-
-const PROJECTS = [
-  { id: '1', name: 'Project Phoenix', status: 'active', budget: '₹50L', completion: 68, date: '2026-04-05', color: 'bg-brand-blue' },
-  { id: '2', name: 'Enterprise Audit', status: 'active', budget: '₹80L', completion: 90, date: '2026-04-12', color: 'bg-brand-pink' },
-  { id: '3', name: 'Supply Chain AI', status: 'planning', budget: '₹35L', completion: 5, date: '2026-04-24', color: 'bg-brand-yellow' },
-];
+import { createProjectAction, getProjects } from '@/app/actions/projects';
 
 export default function ProjectsPage() {
   const [view, setView] = useState('calendar');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 3, 1)); // April 2026 init
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 3, 1)); 
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Form State
+  const [formData, setFormData] = useState({ name: '', budget: '', startDate: '2026-04-10' });
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  async function loadProjects() {
+    setLoading(true);
+    const data = await getProjects();
+    setProjects(data);
+    setLoading(false);
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const res = await createProjectAction(formData);
+    if (res.success) {
+       await loadProjects();
+       setIsModalOpen(false);
+       setFormData({ name: '', budget: '', startDate: '2026-04-10' });
+    } else {
+       alert(res.error);
+    }
+    setSubmitting(false);
+  };
 
   // ── CALENDAR LOGIC ──
   const daysInMonth = (month: number, year: number) => new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = (month: number, year: number) => new Date(year, month, 1).getDay();
 
-  const handlePrevMonth = () => {
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
-  };
-  const handleNextMonth = () => {
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
-  };
+  const handlePrevMonth = () => setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  const handleNextMonth = () => setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
 
   const calendarDays = useMemo(() => {
     const year = currentDate.getFullYear();
@@ -37,110 +59,83 @@ export default function ProjectsPage() {
     const totalDays = daysInMonth(month, year);
     const startOffset = firstDayOfMonth(month, year);
     const prevMonthDays = daysInMonth(month - 1, year);
-
     const days = [];
-    // Prev Month Padding
-    for (let i = startOffset - 1; i >= 0; i--) {
-      days.push({ day: prevMonthDays - i, current: false, dateStr: `${year}-${month}-${prevMonthDays - i}` });
-    }
-    // Current Month
+    for (let i = startOffset - 1; i >= 0; i--) days.push({ day: prevMonthDays - i, current: false, dateStr: `${year}-${month}-${prevMonthDays - i}` });
     for (let i = 1; i <= totalDays; i++) {
-      const d = i < 10 ? `0${i}` : i;
-      const m = (month + 1) < 10 ? `0${month + 1}` : month + 1;
-      days.push({ day: i, current: true, dateStr: `${year}-${m}-${d}` });
+       const d = i < 10 ? `0${i}` : i;
+       const m = (month + 1) < 10 ? `0${month + 1}` : month + 1;
+       days.push({ day: i, current: true, dateStr: `${year}-${m}-${d}` });
     }
-    // Next Month Padding
     const remaining = 42 - days.length;
-    for (let i = 1; i <= remaining; i++) {
-      days.push({ day: i, current: false, dateStr: `${year}-${month + 2}-${i}` });
-    }
+    for (let i = 1; i <= remaining; i++) days.push({ day: i, current: false, dateStr: `${year}-${month + 2}-${i}` });
     return days;
   }, [currentDate]);
 
   return (
-    <div className="space-y-10 animate-slide-in pb-20 px-4 lg:px-0">
+    <div className="h-[calc(100vh-140px)] flex flex-col space-y-6 animate-slide-in overflow-hidden">
       
       {/* ── HEADER ── */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 flex-shrink-0">
         <div>
-          <h1 className="text-5xl font-black text-brand-black tracking-tighter mb-2">Project Fleet</h1>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Managing {PROJECTS.length} strategic missions</p>
+          <h1 className="text-4xl font-black text-brand-black tracking-tighter mb-1">Project Fleet</h1>
+          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[9px]">Operational Control / {projects.length} Ventures</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex p-1.5 bg-white border border-black/[0.03] rounded-[1.5rem] shadow-premium-sm">
-             <button onClick={() => setView('grid')} className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${view === 'grid' ? 'bg-brand-black text-white' : 'text-gray-400'}`}>
-                <LayoutGrid size={16} /> Grid
-             </button>
-             <button onClick={() => setView('calendar')} className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${view === 'calendar' ? 'bg-brand-black text-white' : 'text-gray-400'}`}>
-                <CalendarDays size={16} /> Schedule
-             </button>
+          <div className="flex p-1 bg-white border border-black/[0.03] rounded-2xl shadow-premium-sm">
+             <button onClick={() => setView('grid')} className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-[9px] font-black uppercase tracking-widest ${view === 'grid' ? 'bg-brand-black text-white' : 'text-gray-400'}`}><LayoutGrid size={14} /> Grid</button>
+             <button onClick={() => setView('calendar')} className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-[9px] font-black uppercase tracking-widest ${view === 'calendar' ? 'bg-brand-black text-white' : 'text-gray-400'}`}><CalendarDays size={14} /> Schedule</button>
           </div>
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="group flex items-center gap-3 px-8 py-4 bg-brand-black text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest shadow-premium-xl hover:shadow-glow transition-all active:scale-95"
-          >
-             <div className="w-6 h-6 rounded-lg bg-brand-blue flex items-center justify-center group-hover:rotate-90 transition-transform">
-                <Plus size={16} />
-             </div>
-             New Venture
-          </button>
+          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-3 px-6 py-3.5 bg-brand-black text-white rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-premium-xl hover:shadow-glow transition-all active:scale-95"><Plus size={16} className="text-brand-blue" /> New Venture</button>
         </div>
       </div>
 
       <AnimatePresence mode="wait">
         {view === 'grid' ? (
-          <motion.div key="grid" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {PROJECTS.map((p, i) => (
-              <ProjectCard key={p.id} project={p} delay={i * 0.1} />
+          <motion.div key="grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 overflow-y-auto pr-2 custom-scrollbar grid grid-cols-1 md:grid-cols-3 gap-6">
+            {projects.map((p, i) => (
+              <ProjectCard key={p.id} project={p} delay={i * 0.05} />
             ))}
           </motion.div>
         ) : (
-          <motion.div key="calendar" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="glass p-10 lg:p-14 bg-white border-white shadow-premium-2xl rounded-[3rem] overflow-hidden">
+          <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 glass p-6 bg-white border-white shadow-premium-xl rounded-[2.5rem] flex flex-col overflow-hidden">
              
-             {/* Calendar Header */}
-             <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
-                <div>
-                   <h2 className="text-3xl font-black text-brand-black tracking-tighter">Strategic Timeline</h2>
-                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Global mission scheduling & deadines</p>
-                </div>
-                <div className="flex items-center gap-6">
-                   <div className="flex bg-surface-soft p-1.5 rounded-2xl border border-black/[0.02]">
-                      <button onClick={handlePrevMonth} className="p-3 hover:bg-white rounded-xl transition shadow-sm text-brand-black"><ChevronLeft size={20} /></button>
-                      <button onClick={handleNextMonth} className="p-3 hover:bg-white rounded-xl transition shadow-sm text-brand-black"><ChevronRight size={20} /></button>
+             {/* Mini Calendar Header */}
+             <div className="flex items-center justify-between mb-6 flex-shrink-0">
+                <div className="flex items-center gap-4">
+                   <div className="flex bg-surface-soft p-1 rounded-xl border border-black/[0.01]">
+                      <button onClick={handlePrevMonth} className="p-2 hover:bg-white rounded-lg transition shadow-sm text-brand-black"><ChevronLeft size={16} /></button>
+                      <button onClick={handleNextMonth} className="p-2 hover:bg-white rounded-lg transition shadow-sm text-brand-black"><ChevronRight size={16} /></button>
                    </div>
-                   <div className="text-center min-w-[180px]">
-                      <p className="text-xl font-black text-brand-black uppercase tracking-tighter">
-                        {currentDate.toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}
-                      </p>
-                   </div>
+                   <p className="text-sm font-black text-brand-black uppercase tracking-widest">{currentDate.toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}</p>
                 </div>
+                {loading && <Loader2 className="animate-spin text-brand-blue" size={16} />}
              </div>
 
-             <div className="border border-black/[0.05] rounded-[2.5rem] overflow-hidden bg-white shadow-premium-lg">
-                <div className="grid grid-cols-7 border-b border-black/[0.05] bg-surface-soft/50">
+             <div className="flex-1 flex flex-col border border-black/[0.03] rounded-[2rem] overflow-hidden bg-white shadow-sm">
+                <div className="grid grid-cols-7 border-b border-black/[0.03] bg-surface-soft/30">
                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                     <div key={day} className="py-6 text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">{day}</div>
+                     <div key={day} className="py-2.5 text-center text-[8px] font-black uppercase tracking-[0.2em] text-gray-400">{day}</div>
                    ))}
                 </div>
 
-                <div className="grid grid-cols-7 bg-black/[0.02] gap-[1px]">
+                <div className="flex-1 grid grid-cols-7 bg-black/[0.01] gap-[1px] min-h-0">
                    {calendarDays.map((date, i) => {
-                     const projectsOnDay = PROJECTS.filter(p => p.date === date.dateStr);
-                     const isToday = new Date().toDateString() === new Date(date.dateStr).toDateString();
+                     const projectsOnDay = projects.filter(p => {
+                        const pDate = p.timeline?.split(' - ')?.[0] || p.timeline;
+                        return pDate === date.dateStr;
+                     });
+                     const isToday = new Date().toISOString().split('T')[0] === date.dateStr;
 
                      return (
-                       <div key={i} className={`min-h-[160px] p-4 bg-white hover:z-10 hover:shadow-inner transition-all relative ${!date.current ? 'bg-surface-soft/30' : ''}`}>
-                          <div className="flex items-center justify-between mb-4">
-                             <span className={`text-[11px] font-black tracking-widest ${isToday ? 'w-8 h-8 bg-brand-black text-white rounded-xl flex items-center justify-center shadow-premium-md' : 'text-gray-300'}`}>
-                                {date.day}
-                             </span>
+                       <div key={i} className={`p-2 bg-white hover:bg-surface-soft/50 transition-all flex flex-col overflow-hidden ${!date.current ? 'bg-surface-soft/20 opacity-40' : ''}`}>
+                          <div className="flex items-center justify-between mb-1.5 flex-shrink-0">
+                             <span className={`text-[9px] font-black ${isToday ? 'w-5 h-5 bg-brand-black text-white rounded-lg flex items-center justify-center' : 'text-gray-300'}`}>{date.day}</span>
                           </div>
-                          
-                          <div className="space-y-2">
+                          <div className="flex-1 overflow-y-auto space-y-1 no-scrollbar min-h-0">
                              {projectsOnDay.map(p => (
-                               <motion.div key={p.id} initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className={`p-2.5 ${p.color} text-white rounded-xl text-[9px] font-black uppercase tracking-tighter truncate shadow-premium-sm cursor-pointer hover:scale-105 transition-transform`}>
+                               <div key={p.id} className="p-1.5 bg-brand-blue text-white rounded-lg text-[7px] font-black uppercase tracking-tighter truncate shadow-sm">
                                   {p.name}
-                               </motion.div>
+                               </div>
                              ))}
                           </div>
                        </div>
@@ -151,26 +146,58 @@ export default function ProjectsPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/50 backdrop-blur-md" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-premium-2xl p-10 overflow-hidden">
+               <h2 className="text-2xl font-black text-brand-black tracking-tighter mb-8">New Venture Deployment</h2>
+               <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-1">
+                     <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-3">Venture Name</label>
+                     <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} type="text" placeholder="e.g. Neo Infrastructure" className="w-full px-5 py-3.5 bg-surface-soft rounded-2xl text-xs font-bold outline-none border border-transparent focus:bg-white focus:border-brand-blue/20 transition" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                     <div className="space-y-1">
+                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-3">Budget (INR)</label>
+                        <input required value={formData.budget} onChange={e => setFormData({...formData, budget: e.target.value})} type="text" placeholder="5,000,000" className="w-full px-5 py-3.5 bg-surface-soft rounded-2xl text-xs font-bold outline-none border border-transparent focus:bg-white focus:border-brand-blue/20 transition" />
+                     </div>
+                     <div className="space-y-1">
+                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-3">Launch Date</label>
+                        <input required value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} type="date" className="w-full px-5 py-3.5 bg-surface-soft rounded-2xl text-xs font-bold outline-none border border-transparent focus:bg-white focus:border-brand-blue/20 transition" />
+                     </div>
+                  </div>
+                  <button type="submit" disabled={submitting} className="w-full py-4 bg-brand-black text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-premium-lg hover:shadow-glow transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+                     {submitting ? <Loader2 className="animate-spin" size={14} /> : 'Deploy Project'}
+                  </button>
+               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 function ProjectCard({ project, delay }: { project: any, delay: number }) {
+  const completion = Math.min(100, Math.round((project.spent / (project.budget || 1)) * 100));
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }} className="glass p-8 bg-white border-white shadow-premium-lg group hover:shadow-premium-xl transition-all">
-       <div className="flex items-start justify-between mb-8">
-          <div className="w-14 h-14 rounded-[1.8rem] bg-surface-soft flex items-center justify-center text-brand-black group-hover:bg-brand-black group-hover:text-white transition-all shadow-sm">
-             <FolderKanban size={24} />
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay }} className="glass p-6 bg-white border-white shadow-premium-lg flex flex-col h-fit group">
+       <div className="flex items-start justify-between mb-6">
+          <div className="w-10 h-10 rounded-xl bg-surface-soft flex items-center justify-center text-brand-black group-hover:bg-brand-black group-hover:text-white transition-all"><FolderKanban size={18} /></div>
+          <span className="text-[8px] font-black uppercase tracking-widest text-brand-blue px-2 py-1 bg-brand-blue/5 rounded-lg">Operational</span>
+       </div>
+       <h3 className="text-xl font-black text-brand-black tracking-tighter mb-4">{project.name}</h3>
+       <div className="flex-1 space-y-4">
+          <div className="w-full bg-surface-soft h-1.5 rounded-full overflow-hidden">
+             <motion.div initial={{ width: 0 }} animate={{ width: `${completion}%` }} className="h-full bg-brand-blue shadow-glow-blue" />
           </div>
-          <span className={`px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest bg-blue-50 text-brand-blue border border-brand-blue/10`}>Active</span>
-       </div>
-       <h3 className="text-2xl font-black text-brand-black tracking-tighter mb-4">{project.name}</h3>
-       <div className="w-full bg-surface-soft h-2 rounded-full overflow-hidden mb-6">
-          <motion.div initial={{ width: 0 }} animate={{ width: `${project.completion}%` }} className="h-full bg-brand-blue shadow-glow-blue" />
-       </div>
-       <div className="flex items-center justify-between">
-          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Budget: {project.budget}</p>
-          <button className="p-3 bg-surface-soft rounded-xl text-brand-black group-hover:bg-brand-pink group-hover:text-white transition-all"><ChevronRight size={18} /></button>
+          <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest text-gray-400">
+             <span>Spent: ₹{(project.spent || 0).toLocaleString()}</span>
+             <span className="text-brand-black">Budget: ₹{(project.budget || 0).toLocaleString()}</span>
+          </div>
        </div>
     </motion.div>
   );
