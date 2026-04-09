@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Building2, FolderKanban, Wallet, UserCheck,
   FileBarChart, Bot, ChevronRight, Search, Bell,
-  Settings, LogOut, Menu, X, Shield, Send, Mic, Loader2, Trash2
+  Settings, LogOut, Menu, X, Shield, Send, Mic, Loader2, Trash2, Volume2
 } from 'lucide-react';
 import { signOut } from '@/lib/auth/supabase';
 import { useAuth } from '@/lib/hooks';
@@ -33,11 +33,13 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([INITIAL_MESSAGE]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   
   const pathname = usePathname();
   const router = useRouter();
   const { profile } = useAuth();
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
 
   // Robust Scroll-to-Bottom
   useEffect(() => {
@@ -67,6 +69,35 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     setChatHistory([INITIAL_MESSAGE]);
   };
 
+  const playVoice = async (text: string) => {
+    try {
+       setIsSpeaking(true);
+       const response = await fetch('/api/tts', {
+         method: 'POST',
+         body: JSON.stringify({ text })
+       });
+
+       if (!response.ok) throw new Error('TTS failed');
+
+       const audioData = await response.arrayBuffer();
+       
+       if (!audioContextRef.current) {
+          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+       }
+       
+       const buffer = await audioContextRef.current.decodeAudioData(audioData);
+       const source = audioContextRef.current.createBufferSource();
+       source.buffer = buffer;
+       source.connect(audioContextRef.current.destination);
+       source.onended = () => setIsSpeaking(false);
+       source.start(0);
+       
+    } catch (err) {
+       console.error("Playback error:", err);
+       setIsSpeaking(false);
+    }
+  };
+
   const handleAgenticCommand = async (text: string) => {
     if (!text.trim() || isProcessing) return;
     
@@ -78,18 +109,37 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       const responseText = await queryCureVendAI(text);
       setChatHistory(prev => [...prev, { role: 'bot', text: responseText }]);
       
-      // Auto-navigation detection (optional but helpful)
+      // Detection for navigation
       const t = text.toLowerCase();
       if (t.includes('finance') || t.includes('payment')) router.push('/user/finance');
       else if (t.includes('project')) router.push('/user/projects');
       
-      // Background TTS
-      fetch('/api/tts', { method: 'POST', body: JSON.stringify({ text: responseText }) }).catch(() => {});
+      // USE ELEVEN LABS FOR VOICE
+      await playVoice(responseText);
+
     } catch (error) {
-      setChatHistory(prev => [...prev, { role: 'bot', text: "I hit a snag. Please ensure your Gemini key is correct." }]);
+      setChatHistory(prev => [...prev, { role: 'bot', text: "I'm having trouble syncing with Gemini. Please check your API key." }]);
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const startListening = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+       alert("Speech recognition not supported in this browser. Please use Chrome.");
+       return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-IN';
+    recognition.start();
+    setIsListening(true);
+    recognition.onresult = (event: any) => {
+      const command = event.results[0][0].transcript;
+      setIsListening(false);
+      handleAgenticCommand(command);
+    };
+    recognition.onerror = () => setIsListening(false);
   };
 
   if (pathname?.includes('/login') || pathname?.includes('/register')) return <>{children}</>;
@@ -132,7 +182,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </nav>
 
             <div className="p-4 border-t border-black/[0.02]">
-               <button onClick={handleSignOut} className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-2xl border border-gray-100 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-pink transition-all active:scale-95">
+               <button onClick={handleSignOut} className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-2xl border border-gray-100 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-pink transition-all active:scale-95 shadow-sm">
                   <LogOut size={14} /> Sign Out
                </button>
             </div>
@@ -184,10 +234,13 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     {/* Header */}
                     <div className="p-8 bg-brand-black text-white flex items-center justify-between">
                        <div className="flex items-center gap-4">
-                          <Bot size={32} className="text-brand-blue" />
+                          <div className="relative">
+                             <Bot size={32} className="text-brand-blue" />
+                             {isSpeaking && <span className="absolute -top-1 -right-1 flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-blue opacity-75"></span><span className="relative inline-flex rounded-full h-3 w-3 bg-brand-blue"></span></span>}
+                          </div>
                           <div>
                              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-blue leading-none mb-1">CureVendAI Assistant</p>
-                             <p className="text-sm font-black text-white/90">Data Operations</p>
+                             <p className="text-sm font-black text-white/90">Voice Enabled (ElevenLabs)</p>
                           </div>
                        </div>
                        <div className="flex items-center gap-2">
@@ -196,19 +249,20 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                        </div>
                     </div>
 
-                    {/* Messages Area - FIXED SCROLLING */}
+                    {/* Messages Area */}
                     <div className="flex-1 p-8 overflow-y-auto custom-scrollbar bg-surface-soft/50 flex flex-col space-y-8 scroll-smooth">
                        {chatHistory.map((chat, i) => (
                           <div key={i} className={`flex ${chat.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                             <div className={`max-w-[85%] p-6 rounded-[2.2rem] shadow-premium-md border border-black/[0.02] ${chat.role === 'user' ? 'bg-brand-black text-white rounded-tr-none' : 'bg-white text-brand-black rounded-tl-none'}`}>
+                             <div className={`max-w-[85%] p-6 rounded-[2.2rem] shadow-premium-md border border-black/[0.02] ${chat.role === 'user' ? 'bg-brand-black text-white' : 'bg-white text-brand-black'}`}>
                                 <p className="text-[12px] font-bold leading-relaxed whitespace-pre-wrap">{chat.text}</p>
                              </div>
                           </div>
                        ))}
                        {isProcessing && (
                           <div className="flex justify-start">
-                             <div className="p-6 bg-white rounded-[2.2rem] shadow-premium-md border border-black/[0.02] animate-pulse">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-brand-blue">Assistant is processing...</p>
+                             <div className="p-6 bg-white rounded-[2.2rem] shadow-premium-md border border-black/[0.02] animate-pulse flex items-center gap-2">
+                                <Loader2 size={14} className="animate-spin text-brand-blue" />
+                                <p className="text-[10px] font-black uppercase tracking-widest text-brand-blue">Processing...</p>
                              </div>
                           </div>
                        )}
@@ -218,12 +272,19 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     {/* Input Area */}
                     <div className="p-8 bg-white border-t border-black/[0.03]">
                        <div className="flex items-center gap-4">
+                          <button 
+                             onClick={startListening} 
+                             className={`p-5 rounded-[1.8rem] transition-all shadow-premium-md ${isListening ? 'bg-brand-pink text-white animate-pulse' : 'bg-surface-soft text-brand-blue'}`}
+                             title="Speech-to-Text"
+                          >
+                             <Mic size={24} />
+                          </button>
                           <input 
                              type="text" 
                              value={chatMessage} 
                              onChange={(e) => setChatMessage(e.target.value)} 
                              onKeyPress={(e) => e.key === 'Enter' && handleAgenticCommand(chatMessage)} 
-                             placeholder="Ask your data questions..." 
+                             placeholder="Voice or type command..." 
                              className="flex-1 bg-surface-soft px-6 py-5 rounded-[1.8rem] text-[12px] font-bold outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all" 
                           />
                           <button 
@@ -231,7 +292,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                              disabled={isProcessing}
                              className="p-5 bg-brand-black text-white rounded-[1.8rem] shadow-premium-md active:scale-95 disabled:opacity-50 transition-all"
                           >
-                             <Send size={24} />
+                             {isSpeaking ? <Volume2 size={24} className="animate-pulse" /> : <Send size={24} />}
                           </button>
                        </div>
                     </div>
@@ -243,7 +304,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               onClick={() => setIsChatOpen(!isChatOpen)} 
               className={`w-20 h-20 rounded-[2.5rem] shadow-premium-xl flex items-center justify-center border-4 border-white transition-all transform hover:scale-105 active:scale-95 ${isChatOpen ? 'bg-brand-pink text-white' : 'bg-brand-black text-white'}`}
            >
-              {isChatOpen ? <X size={32} /> : <Bot size={36} className="text-brand-blue" />}
+              {isChatOpen ? <X size={32} /> : <div className="relative"><Bot size={36} className="text-brand-blue" />{isSpeaking && <span className="absolute -top-1 -right-1 flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-pink opacity-75"></span><span className="relative inline-flex rounded-full h-3 w-3 bg-brand-pink"></span></span>}</div>}
            </button>
         </div>
       </div>
