@@ -93,7 +93,7 @@ python
 #### Step 2a: Railway Backend Setup
 ```bash
 # 1. Go to https://railway.app → Sign In with GitHub
-# 2. Create new project → GitHub template → select procurai repo
+# 2. Create new project → GitHub template → select curevendai repo
 # 3. Configure environment variables:
 #    - Copy all from backend/.env
 #    - Add DATABASE_URL (from Supabase)
@@ -109,11 +109,11 @@ python
 #### Step 2b: Test Backend API
 ```bash
 # After deployment:
-1. Copy Railway URL (e.g., https://procurai-api.railway.app)
+1. Copy Railway URL (e.g., https://curevendai-api.railway.app)
 2. Test health check:
-   curl https://procurai-api.railway.app/health
+   curl https://curevendai-api.railway.app/health
 3. View API docs:
-   https://procurai-api.railway.app/docs
+   https://curevendai-api.railway.app/docs
 4. Test login endpoint:
    POST /api/auth/login with test credentials
 ```
@@ -123,8 +123,8 @@ python
 # Set in Railway dashboard:
 ENVIRONMENT=production
 DEBUG=False
-ALLOWED_HOSTS=procurai-api.railway.app
-CORS_ORIGINS=https://procurai.vercel.app
+ALLOWED_HOSTS=curevendai-api.railway.app
+CORS_ORIGINS=https://curevendai.vercel.app
 DATABASE_URL=postgresql://...  # Supabase
 REDIS_URL=redis://...           # Railway Redis
 ```
@@ -138,7 +138,7 @@ REDIS_URL=redis://...           # Railway Redis
 # Create .env.production.local with:
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-NEXT_PUBLIC_API_URL=https://procurai-api.railway.app
+NEXT_PUBLIC_API_URL=https://curevendai-api.railway.app
 # NO SECRETS - only NEXT_PUBLIC_ variables!
 ```
 
@@ -146,7 +146,7 @@ NEXT_PUBLIC_API_URL=https://procurai-api.railway.app
 ```bash
 # 1. Go to https://vercel.com → Sign In with GitHub
 # 2. Click "Add New..." → "Project"
-# 3. Select procurai repository
+# 3. Select curevendai repository
 # 4. Configure:
 #    - Framework: Next.js
 #    - Root Directory: . (current)
@@ -162,7 +162,7 @@ NEXT_PUBLIC_API_URL=https://procurai-api.railway.app
 #### Step 3c: Test Frontend
 ```bash
 # After deployment:
-1. Visit https://procurai.vercel.app
+1. Visit https://curevendai.vercel.app
 2. Check landing page loads correctly
 3. Click PM Login → should show form
 4. Click Vendor Portal → should show register form
@@ -176,17 +176,17 @@ NEXT_PUBLIC_API_URL=https://procurai-api.railway.app
 #### Step 4a: Add Custom Domain (Vercel)
 ```bash
 # 1. In Vercel Dashboard → Project Settings → Domains
-# 2. Add custom domain (e.g., procurai.com)
+# 2. Add custom domain (e.g., curevendai.com)
 # 3. Update DNS records with Vercel values:
 #    - Type: CNAME
 #    - Value: cname.vercel-dns.com
 # 4. Wait 15-30 minutes for DNS propagation
-# 5. Verify: curl https://procurai.com → should work
+# 5. Verify: curl https://curevendai.com → should work
 ```
 
 #### Step 4b: Configure API Domain
 ```bash
-# If using separate API domain (e.g., api.procurai.com):
+# If using separate API domain (e.g., api.curevendai.com):
 # 1. In Railway → Domain → Add Custom Domain
 # 2. Point to Railway's proxy
 # 3. Update frontend NEXT_PUBLIC_API_URL
@@ -370,7 +370,7 @@ CREATE INDEX idx_invoices_status ON invoices(status);
 #### Step 10b: Load Testing (Optional)
 ```bash
 # Use running simple load test:
-# 1. ab -n 100 -c 10 https://procurai.vercel.app
+# 1. ab -n 100 -c 10 https://curevendai.vercel.app
 # 2. Check Rails response times
 # 3. Verify no 5xx errors
 ```
@@ -433,13 +433,13 @@ CREATE INDEX idx_invoices_status ON invoices(status);
    Push to main branch → Vercel auto-deploys
 
 # 2. Twitter/LinkedIn
-   "ProcurAI is live! 🚀 Vendor management made simple"
+   "CureVendAI is live! 🚀 Vendor management made simple"
 
 # 3. Email
    Send launch announcement to beta users
 
 # 4. Documentation
-   Update status page: procurai.dev/status
+   Update status page: curevendai.dev/status
 ```
 
 ---
@@ -490,7 +490,7 @@ Once all steps complete, you have:
 - ✅ Automatic backups
 - ✅ CDN distribution
 
-**Launch:** https://procurai.vercel.app 🚀
+**Launch:** https://curevendai.vercel.app 🚀
 
 ---
 

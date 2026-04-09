@@ -9,19 +9,19 @@ if (!supabaseUrl || !supabaseKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Auth functions
-export async function signUpPM(email: string, password: string, fullName: string) {
+// ── Auth functions ──────────────────────────────────────────────────────────
+
+export async function signUpUser(email: string, password: string, fullName: string) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
         full_name: fullName,
-        role: 'PM',
+        role: 'PROJECT_MANAGER',
       },
     },
   });
-
   if (error) throw error;
   return data;
 }
@@ -37,19 +37,14 @@ export async function signUpVendor(email: string, password: string, companyName:
       },
     },
   });
-
   if (error) throw error;
   return data;
 }
 
 export async function signIn(email: string, password: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw error;
-  return data;
+  return data; // { session, user }
 }
 
 export async function signOut() {
@@ -63,26 +58,12 @@ export async function getCurrentUser() {
   return user;
 }
 
-export async function verifyOTP(email: string, token: string) {
-  const { data, error } = await supabase.auth.verifyOtp({
-    email,
-    token,
-    type: 'email',
-  });
-
-  if (error) throw error;
-  return data;
-}
-
 export async function signInWithGoogle(role: string = 'VENDOR') {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      queryParams: {
-        access_type: 'offline',
-        prompt: 'consent',
-      },
-      redirectTo: `${window.location.origin}/auth/callback`,
+      queryParams: { access_type: 'offline', prompt: 'consent' },
+      redirectTo: `${window.location.origin}/auth/callback?intended_role=${role}`,
     },
   });
   if (error) throw error;
@@ -92,14 +73,13 @@ export async function signInWithGoogle(role: string = 'VENDOR') {
 export async function checkUserActiveStatus(userId: string) {
   const { data, error } = await supabase
     .from('profiles')
-    .select('is_active, role')
+    .select('id, email, username, full_name, company_name, role, is_active')
     .eq('id', userId)
     .single();
-    
+
   if (error) {
     if (error.code === 'PGRST116') {
-      // Profile not found, possibly not created yet by trigger.
-      return { is_active: false, role: null };
+      return { is_active: false, role: 'PENDING', username: null, full_name: null, company_name: null };
     }
     throw error;
   }

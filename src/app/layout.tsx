@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata = {
-  title: 'ProcurAI - Vendor & Project Management',
+  title: 'CureVendAI - Vendor & Project Management',
   description: 'AI-Powered Vendor & Project Management Platform',
 };
 

@@ -47,3 +47,4 @@ coverage/
 .cache/
 .next/
 .turbopack/
+nextjs.log

@@ -4,16 +4,17 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { signIn, signOut, checkUserActiveStatus, signInWithGoogle } from '@/lib/auth/supabase';
-import { Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
-import Image from 'next/image';
+import { signUpUser, signInWithGoogle } from '@/lib/auth/supabase';
+import { Mail, Lock, AlertCircle, Loader2, User } from 'lucide-react';
 
-export default function PMLogin() {
-  const router = useRouter();
+export default function UserRegister() {
+  const _router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,33 +22,39 @@ export default function PMLogin() {
     setLoading(true);
 
     try {
-      const { session, user } = await signIn(email, password);
-      
-      if (session && user) {
-        const profile = await checkUserActiveStatus(user.id);
-        
-        if (!profile.is_active) {
-          await signOut();
-          throw new Error('Restricted: Your account is pending activation by a Scrum Master.');
-        }
-
-        localStorage.setItem('access_token', session.access_token);
-        // By default redirect to PM dashboard or Scrum Master dashboard depending on role
-        if (profile.role === 'SCRUM_MASTER') {
-          router.push('/scrum-master/dashboard');
-        } else {
-          router.push('/pm/dashboard');
-        }
-      }
+      await signUpUser(email, password, fullName);
+      setSuccess(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
 
+  if (success) {
+    return (
+      <div className="min-h-screen bg-dark-navy text-white flex items-center justify-center px-4">
+        <div className="max-w-md w-full glass p-8 md:p-12 rounded-2xl text-center">
+          <div className="w-16 h-16 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-6">
+            <User size={32} />
+          </div>
+          <h2 className="text-2xl font-bold mb-4">Registration Successful</h2>
+          <p className="text-gray-400 mb-8">
+            Your user account has been created. A Scrum Master must approve your access before you can log in.
+          </p>
+          <Link
+            href="/user/login"
+            className="block w-full py-2.5 bg-gradient-to-r from-primary-blue to-primary-violet rounded-lg font-semibold hover:shadow-glow transition-all"
+          >
+            Return to Login
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-dark-navy text-white flex items-center justify-center px-4">
+    <div className="min-h-screen bg-dark-navy text-white flex items-center justify-center px-4 py-12">
       {/* Animated background */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
@@ -59,13 +66,12 @@ export default function PMLogin() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        {/* Glass card */}
         <div className="glass p-8 md:p-12 rounded-2xl">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary-blue to-primary-violet bg-clip-text text-transparent">
-              ProcurAI
+              CureVendAI
             </h1>
-            <p className="text-gray-400">Project Manager Login</p>
+            <p className="text-gray-400">User Registration</p>
           </div>
 
           {error && (
@@ -82,7 +88,24 @@ export default function PMLogin() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2 text-gray-300">
-                Work Email
+                Full Name
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 text-gray-500" size={20} />
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="John Doe"
+                  required
+                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-blue transition text-white placeholder-gray-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-300">
+                Company Email
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 text-gray-500" size={20} />
@@ -90,7 +113,7 @@ export default function PMLogin() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your.email@company.com"
+                  placeholder="name@company.com"
                   required
                   className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-blue transition text-white placeholder-gray-500"
                 />
@@ -109,6 +132,7 @@ export default function PMLogin() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
+                  minLength={8}
                   className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-blue transition text-white placeholder-gray-500"
                 />
               </div>
@@ -122,10 +146,10 @@ export default function PMLogin() {
               {loading ? (
                 <>
                   <Loader2 size={20} className="animate-spin" />
-                  Signing in...
+                  Creating Account...
                 </>
               ) : (
-                'Sign In'
+                'Register'
               )}
             </button>
             
@@ -142,9 +166,9 @@ export default function PMLogin() {
               type="button"
               onClick={async () => {
                 try {
-                  await signInWithGoogle('PM');
+                  await signInWithGoogle('PROJECT_MANAGER');
                 } catch (err) {
-                  setError(err instanceof Error ? err.message : 'Google Login failed');
+                  setError(err instanceof Error ? err.message : 'Google Registration failed');
                 }
               }}
               className="w-full py-2.5 mt-4 bg-white/5 border border-white/10 rounded-lg font-semibold hover:bg-white/10 transition-all flex items-center justify-center gap-2"
@@ -168,23 +192,16 @@ export default function PMLogin() {
                 />
                 <path d="M1 1h22v22H1z" fill="none" />
               </svg>
-              Google Login
+              Google Register
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-400">
-            <p>Contact your Scrum Master to create an account</p>
+          <div className="mt-6 text-center space-y-2">
+            <p className="text-sm text-gray-400">Already have an account?</p>
+            <Link href="/user/login" className="text-primary-blue hover:text-primary-violet transition font-semibold">
+              Login here
+            </Link>
           </div>
-
-          <div className="mt-4 p-4 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm text-blue-300">
-            Demo credentials available upon request
-          </div>
-        </div>
-
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-gray-400 hover:text-primary-blue transition">
-            ← Back to home
-          </Link>
         </div>
       </motion.div>
     </div>

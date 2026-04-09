@@ -1,4 +1,4 @@
-# 🚀 ProcurAI - Complete Local Setup & Hosting Guide
+# 🚀 CureVendAI - Complete Local Setup & Hosting Guide
 
 ## ⚡ Quick Summary
 Your system has **Python 3.9.6** ✓ but needs **Node.js** to run the frontend.
@@ -60,7 +60,7 @@ npm --version     # Should show 9.x.x or higher
 
 2. **Create New Project**
    - Click "New Project"
-   - Name: `procurai`
+   - Name: `curevendai`
    - Region: **ap-south-1 (Asia, Mumbai)** (for DPDP Act compliance)
    - Password: Create a secure password
    - Click "Create new project"
@@ -105,7 +105,7 @@ curl -s -X GET \
 ### Step 1: Install Dependencies
 
 ```bash
-cd /Users/rohit.chowdhury/Documents/TestRun_CureVendAI/Test/procurai
+cd /Users/rohit.chowdhury/Documents/TestRun_CureVendAI/Test/curevendai
 
 npm install
 # This will download all frontend dependencies (60+ packages)
@@ -149,7 +149,7 @@ Open a **new terminal tab** and run:
 ### Step 1: Setup Python Environment
 
 ```bash
-cd /Users/rohit.chowdhury/Documents/TestRun_CureVendAI/Test/procurai/backend
+cd /Users/rohit.chowdhury/Documents/TestRun_CureVendAI/Test/curevendai/backend
 
 # Create virtual environment
 python3 -m venv venv
@@ -203,7 +203,7 @@ Open a **new terminal tab** and run:
 ### Step 1: Start with Docker Compose
 
 ```bash
-cd /Users/rohit.chowdhury/Documents/TestRun_CureVendAI/Test/procurai
+cd /Users/rohit.chowdhury/Documents/TestRun_CureVendAI/Test/curevendai
 
 docker-compose up
 ```
@@ -216,8 +216,8 @@ This starts:
 
 ```bash
 # Test PostgreSQL
-psql -U procurai -h localhost -d procurai
-# Password: procurai-dev
+psql -U curevendai -h localhost -d curevendai
+# Password: curevendai-dev
 
 # Test Redis
 redis-cli ping
@@ -240,7 +240,7 @@ Terminal 3: Database (Docker)   → PostgreSQL + Redis
 
 1. **Frontend**: http://localhost:3000 → See landing page
 2. **Backend API**: http://localhost:8000/docs → See Swagger UI
-3. **Database**: `psql -U procurai -h localhost -d procurai` → Connected
+3. **Database**: `psql -U curevendai -h localhost -d curevendai` → Connected
 
 ---
 
@@ -330,7 +330,7 @@ npm install
 docker ps
 
 # Check PostgreSQL logs
-docker logs procurai-postgres
+docker logs curevendai-postgres
 
 # Restart services
 docker-compose down
@@ -374,7 +374,7 @@ pytest
 ### Database Management
 ```bash
 # Connect to PostgreSQL
-psql -U procurai -h localhost -d procurai
+psql -U curevendai -h localhost -d curevendai
 
 # View Redis
 redis-cli
@@ -433,14 +433,14 @@ docker-compose up -d
 
 - **Frontend Issues**: Check browser console (DevTools) for errors
 - **Backend Issues**: Check terminal output with `--reload` flag active
-- **Database Issues**: Check Docker logs with `docker logs procurai-postgres`
+- **Database Issues**: Check Docker logs with `docker logs curevendai-postgres`
 - **Supabase Issues**: Check https://supabase.io/docs
 
 ---
 
 ## ✨ You're Ready!
 
-Once Node.js is installed, you can run the entire ProcurAI platform locally:
+Once Node.js is installed, you can run the entire CureVendAI platform locally:
 
 ```bash
 # Terminal 1: Frontend

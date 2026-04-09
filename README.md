@@ -1,8 +1,8 @@
-# ProcurAI - AI-Powered Vendor & Project Management Platform
+# CureVendAI - AI-Powered Vendor & Project Management Platform
 
 ## Overview
 
-ProcurAI is an enterprise-grade, AI-first Vendor and Project Management SaaS platform built for organisations that manage multiple external vendors, track project delivery, and control procurement budgets.
+CureVendAI is an enterprise-grade, AI-first Vendor and Project Management SaaS platform built for organisations that manage multiple external vendors, track project delivery, and control procurement budgets.
 
 **Status**: Draft v1.0 | Deployed: Vercel (Frontend) + Railway (Backend) + Supabase (Database)
 
@@ -19,7 +19,7 @@ ProcurAI is an enterprise-grade, AI-first Vendor and Project Management SaaS pla
 ## Project Structure
 
 ```
-procurai/
+curevendai/
 ├── src/                          # Next.js Frontend (TypeScript + Tailwind)
 │   ├── app/
 │   │   ├── page.tsx              # Landing page
@@ -151,8 +151,8 @@ uvicorn main:app --reload
 
 # OR Local PostgreSQL
 psql -U postgres
-CREATE DATABASE procurai;
-# Connection string: postgresql://user:password@localhost/procurai
+CREATE DATABASE curevendai;
+# Connection string: postgresql://user:password@localhost/curevendai
 ```
 
 ## API Documentation
@@ -218,7 +218,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 NEXT_PUBLIC_API_URL=http://localhost:8000
 
 # Backend (.env)
-DATABASE_URL=postgresql://user:pass@localhost/procurai
+DATABASE_URL=postgresql://user:pass@localhost/curevendai
 ENVIRONMENT=development
 SECRET_KEY=your-secret-key
 REDIS_URL=redis://localhost:6379
@@ -334,9 +334,9 @@ docker run -d supabase/postgres
 ## Support & Contribution
 
 - **Issues**: GitHub Issues
-- **Docs**: https://procurai.dev (planned)
-- **Status**: https://status.procurai.dev (planned)
-- **Contact**: support@procurai.dev
+- **Docs**: https://curevendai.dev (planned)
+- **Status**: https://status.curevendai.dev (planned)
+- **Contact**: support@curevendai.dev
 
 ## Roadmap (Post-MVP)
 
@@ -351,7 +351,7 @@ docker run -d supabase/postgres
 
 ## License
 
-Proprietary - All rights reserved © 2026 ProcurAI
+Proprietary - All rights reserved © 2026 CureVendAI
 
 ## Authors
 

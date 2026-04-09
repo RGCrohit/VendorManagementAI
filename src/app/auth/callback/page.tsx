@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase, signOut } from '@/lib/auth/supabase';
+import { supabase } from '@/lib/auth/supabase';
 import { Loader2 } from 'lucide-react';
+
+const USER_ROLES = [
+  'JUNIOR_PROJECT_MANAGER',
+  'PROJECT_MANAGER',
+  'HEAD_PROJECT_MANAGER',
+];
 
 export default function AuthCallback() {
   const router = useRouter();
@@ -15,55 +21,39 @@ export default function AuthCallback() {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) throw new Error(`Session error: ${sessionError.message}`);
+        if (!session) return; // Wait for SIGNED_IN event
 
-        if (!session) {
-          // OAuth redirects happen via hash — session may not be ready immediately
-          return;
-        }
+        // Fetch this user's profile from the DB
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('is_active, role')
+          .eq('id', session.user.id)
+          .single();
 
-        // Try to fetch the user profile
-        let profile: { is_active: boolean; role: string | null } | null = null;
-
-        try {
-          const { data, error: profileError } = await supabase
-            .from('profiles')
-            .select('is_active, role')
-            .eq('id', session.user.id)
-            .single();
-
-          if (profileError) {
-            // If profiles table doesn't exist or profile not created yet, allow through
-            console.warn('Profile fetch warning:', profileError.message);
-            profile = null;
-          } else {
-            profile = data;
-          }
-        } catch (profileErr) {
-          console.warn('Profile lookup failed, proceeding without profile check:', profileErr);
-          profile = null;
-        }
-
-        const isGoogleAuth =
-          session.user.app_metadata?.provider === 'google' ||
-          session.user.app_metadata?.providers?.includes('google');
-
-        // Only enforce is_active for non-Google, non-new users
-        if (!isGoogleAuth && profile && !profile.is_active) {
-          await signOut();
-          router.push('/vendor/login?error=Your account is pending activation by a Scrum Master.');
-          return;
+        if (profileError && profileError.code !== 'PGRST116') {
+          console.warn('Profile lookup failed:', profileError.message);
         }
 
         localStorage.setItem('access_token', session.access_token);
 
-        // Route by role, fallback to vendor portal
-        const role = profile?.role;
+        const role = profile?.role ?? 'PENDING';
+
+        // Route by role
         if (role === 'SCRUM_MASTER') {
           router.push('/scrum-master/dashboard');
-        } else if (role === 'PM') {
-          router.push('/pm/dashboard');
-        } else {
+        } else if (USER_ROLES.includes(role)) {
+          router.push('/user/dashboard');
+        } else if (role === 'VENDOR') {
           router.push('/vendor/portal');
+        } else {
+          // PENDING or unknown — check URL param first (from Google SSO), then user_metadata
+          const urlParams = new URLSearchParams(window.location.search);
+          const intendedRole = urlParams.get('intended_role') || session.user.user_metadata?.role || 'PROJECT_MANAGER';
+          if (intendedRole === 'VENDOR') {
+            router.push('/vendor/portal');
+          } else {
+            router.push('/user/dashboard');
+          }
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Authentication failed';
@@ -94,7 +84,7 @@ export default function AuthCallback() {
             {error}
           </p>
           <p className="text-gray-500 text-xs mb-6 mt-2">
-            Check your Supabase dashboard — the <code className="text-primary-blue">profiles</code> table may need to be created via the SQL migration.
+            Check your Supabase dashboard — the <code className="text-primary-blue">profiles</code> table may need the SQL migration applied.
           </p>
           <button
             onClick={() => router.push('/')}
@@ -112,4 +102,3 @@ export default function AuthCallback() {
     </div>
   );
 }
-

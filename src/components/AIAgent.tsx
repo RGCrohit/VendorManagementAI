@@ -48,7 +48,7 @@ export function AIAgent() {
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/10">
-            <h3 className="font-semibold">ProcurAI Assistant</h3>
+            <h3 className="font-semibold">CureVendAI Assistant</h3>
             <button
               onClick={() => setIsOpen(false)}
               className="text-gray-400 hover:text-white transition"

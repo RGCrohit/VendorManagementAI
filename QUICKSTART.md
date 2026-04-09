@@ -1,13 +1,13 @@
-# ProcurAI - Quick Start Guide
+# CureVendAI - Quick Start Guide
 
 ## 🎯 Project Setup Complete! ✅
 
-Your ProcurAI workspace has been scaffolded with a complete full-stack architecture. Here's what's included:
+Your CureVendAI workspace has been scaffolded with a complete full-stack architecture. Here's what's included:
 
 ### 📁 Project Structure
 
 ```
-procurai/
+curevendai/
 ├── Frontend (Next.js 15 + TypeScript)
 │   ├── src/app/              # App Router pages
 │   ├── src/components/       # Reusable UI components
@@ -83,7 +83,7 @@ uvicorn main:app --reload
 docker-compose up -d
 
 # Update .env files:
-# DATABASE_URL=postgresql://procurai:procurai-dev@localhost/procurai
+# DATABASE_URL=postgresql://curevendai:curevendai-dev@localhost/curevendai
 # NEXT_PUBLIC_SUPABASE_URL=http://localhost:3000 (Supabase local)
 ```
 
@@ -149,7 +149,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ### Backend (.env)
 ```env
-DATABASE_URL=postgresql://user:pass@localhost/procurai
+DATABASE_URL=postgresql://user:pass@localhost/curevendai
 ENVIRONMENT=development
 SECRET_KEY=your-secret-key
 REDIS_URL=redis://localhost:6379
@@ -308,8 +308,8 @@ pip install -r requirements.txt
 ## 📞 Support
 
 - **Issues**: Check GitHub Issues
-- **Docs**: https://procurai.dev
-- **Email**: support@procurai.dev
+- **Docs**: https://curevendai.dev
+- **Email**: support@curevendai.dev
 
 ---
 

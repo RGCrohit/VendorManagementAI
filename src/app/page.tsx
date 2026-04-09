@@ -1,214 +1,191 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
+import { 
+  Menu, X, ArrowRight, PlayCircle, TrendingUp
+} from 'lucide-react';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
 
   return (
-    <div className="min-h-screen bg-dark-navy text-white overflow-hidden">
-      {/* Animated background */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+    <div className="relative min-h-screen bg-white overflow-hidden selection:bg-brand-blue/20">
+      
+      {/* ── Background Elements ─────────────────────────────────────────── */}
+      <div className="fixed inset-0 pointer-events-none">
+        {/* Soft flowing orbs — logo colors */}
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-blue/5 rounded-full blur-[100px] animate-blob" />
+        <div className="absolute top-[20%] right-[-5%] w-[40%] h-[40%] bg-brand-pink/5 rounded-full blur-[100px] animate-blob" style={{ animationDelay: '2s' }} />
+        <div className="absolute bottom-[-10%] left-[10%] w-[45%] h-[45%] bg-brand-yellow/5 rounded-full blur-[100px] animate-blob" style={{ animationDelay: '4s' }} />
+        
+        {/* Fine grid pattern for premium feel */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay" />
       </div>
 
-      {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-dark-navy/80 border-b border-white/10">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="text-2xl font-bold bg-gradient-to-r from-primary-blue to-primary-violet bg-clip-text text-transparent">
-            ProcurAI
+      {/* ── Navbar ─────────────────────────────────────────────────────── */}
+      <nav className="relative z-50 flex items-center justify-between px-6 lg:px-12 h-20 md:h-24">
+        <div className="flex items-center gap-3 group px-4 py-2 rounded-2xl hover:bg-black/[0.02] transition-colors cursor-pointer border border-transparent hover:border-black/[0.05]">
+          <div className="w-10 h-10 rounded-xl bg-white shadow-premium-md flex items-center justify-center p-1.5 group-hover:scale-110 transition-transform">
+            <Image src="/logo.png" alt="CureVendAI Logo" width={32} height={32} priority />
           </div>
-          
-          <button
-            className="md:hidden text-white"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <span className="text-xl font-black text-brand-black tracking-tighter">CureVendAI</span>
+        </div>
 
-          <div className="hidden md:flex gap-8 items-center">
-            <Link href="/pm/login" className="hover:text-primary-blue transition">PM Login</Link>
-            <Link href="/vendor/login" className="hover:text-primary-blue transition">Vendor Portal</Link>
-            <Link href="#pricing" className="hover:text-primary-blue transition">Pricing</Link>
-          </div>
-        </nav>
-
-        {/* Mobile menu */}
-        {isMenuOpen && (
-          <div className="md:hidden glass-darker border-t">
-            <div className="px-4 py-4 space-y-4">
-              <Link href="/pm/login" className="block hover:text-primary-blue">PM Login</Link>
-              <Link href="/vendor/login" className="block hover:text-primary-blue">Vendor Portal</Link>
-              <Link href="#pricing" className="block hover:text-primary-blue">Pricing</Link>
-            </div>
-          </div>
-        )}
-      </header>
-
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center px-4">
-        <motion.div
-          className="max-w-4xl mx-auto text-center"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.h1
-            variants={itemVariants}
-            className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary-blue via-purple-400 to-primary-violet bg-clip-text text-transparent leading-tight"
-          >
-            AI-Powered Vendor & Project Management
-          </motion.h1>
-
-          <motion.p
-            variants={itemVariants}
-            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto"
-          >
-            Procurement intelligence from onboarding to payment — powered by AI agents, voice commands, and real-time analytics.
-          </motion.p>
-
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Link
-              href="/pm/login"
-              className="px-8 py-4 rounded-lg bg-gradient-to-r from-primary-blue to-primary-violet hover:shadow-glow transition-all font-semibold"
-            >
-              PM Login
-            </Link>
-            <Link
-              href="/vendor/login"
-              className="px-8 py-4 rounded-lg glass hover:glass-darker transition-all font-semibold"
-            >
-              Vendor Portal
-            </Link>
-          </motion.div>
-
-          {/* Animated glassmorphism card */}
-          <motion.div
-            variants={itemVariants}
-            className="mt-16 relative"
-            style={{
-              y: scrollY * 0.1,
-            }}
-          >
-            <div className="glass p-8 md:p-12">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary-blue">AI Voice</div>
-                  <div className="text-sm text-gray-400">Agents</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary-blue">OCR</div>
-                  <div className="text-sm text-gray-400">Pipeline</div>
-                </div>
-                <div className="text-center hidden md:block">
-                  <div className="text-3xl font-bold text-primary-blue">Multi</div>
-                  <div className="text-sm text-gray-400">Role</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary-violet">Real-time</div>
-                  <div className="text-sm text-gray-400">TAT</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary-violet">Budget</div>
-                  <div className="text-sm text-gray-400">Tracking</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary-violet">Razorpay</div>
-                  <div className="text-sm text-gray-400">Payments</div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 px-4 max-w-7xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-primary-blue to-primary-violet bg-clip-text text-transparent"
-        >
-          Key Features
-        </motion.h2>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {[
-            { title: 'AI Voice Agent', description: 'Voice-controlled procurement intelligence' },
-            { title: 'OCR Invoicing', description: 'Automatic invoice data extraction' },
-            { title: 'Multi-Role Access', description: 'Role-based permissions and workflows' },
-            { title: 'Real-time TAT', description: 'Live milestone tracking and alerts' },
-            { title: 'Budget Control', description: 'Indian FY tracking with alerts' },
-            { title: 'Razorpay Integration', description: 'Seamless payment processing' },
-          ].map((feature, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="glass p-6 rounded-xl hover:glass-darker transition-all"
-            >
-              <h3 className="text-xl font-semibold mb-2 text-primary-blue">{feature.title}</h3>
-              <p className="text-gray-400">{feature.description}</p>
-            </motion.div>
+        <div className="hidden md:flex items-center gap-10">
+          {['Solutions', 'Ecosystem', 'Case Studies', 'Insights'].map((link) => (
+            <a key={link} href="#" className="text-sm font-bold text-gray-400 hover:text-brand-black transition-colors uppercase tracking-widest">{link}</a>
           ))}
         </div>
-      </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 max-w-7xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-primary-blue to-primary-violet bg-clip-text text-transparent"
-        >
-          Pricing
-        </motion.h2>
+        <div className="flex items-center gap-4">
+          <Link href="/user/login" className="text-sm font-bold text-gray-500 hover:text-brand-black transition-colors">Sign In</Link>
+          <Link href="/vendor/login" className="px-5 py-2.5 bg-brand-black text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-black/90 transition-all shadow-premium-lg active:scale-95">Vendor Portal</Link>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          className="glass p-8 md:p-12 text-center rounded-xl"
-        >
-          <h3 className="text-3xl font-bold mb-4">Start Free</h3>
-          <p className="text-xl text-gray-300 mb-6">Zero infrastructure cost. Scale-to-pay as you grow.</p>
-          <div className="text-4xl font-bold text-primary-blue mb-4">$0/month</div>
-          <p className="text-gray-400">Free tier includes: 500MB database, OCR pipeline, AI agents, voice features</p>
-        </motion.div>
-      </section>
+        {/* Mobile Menu Toggle */}
+        <button className="md:hidden p-2 text-brand-black" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </nav>
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-8 px-4">
-        <div className="max-w-7xl mx-auto text-center text-gray-400">
-          <p>© 2026 ProcurAI. Built for scale, starting free.</p>
+      {/* Mobile Navigation */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-20 left-0 right-0 z-40 bg-white border-b border-gray-100 p-6 flex flex-col gap-6 md:hidden shadow-xl"
+          >
+            {['Solutions', 'Ecosystem', 'Case Studies', 'Insights'].map((link) => (
+              <a key={link} href="#" className="text-lg font-black text-brand-black uppercase tracking-widest">{link}</a>
+            ))}
+            <div className="h-px bg-gray-100 w-full" />
+            <Link href="/user/login" className="text-lg font-black text-gray-500 uppercase tracking-widest">Sign In</Link>
+            <Link href="/vendor/login" className="py-4 bg-brand-black text-white text-center font-black uppercase tracking-widest rounded-2xl">Vendor Portal</Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Hero ───────────────────────────────────────────────────────── */}
+      <main className="relative z-10 px-6 pt-12 md:pt-16 lg:px-12 pb-20">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+          
+          <div className="flex-1 text-center lg:text-left">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/[0.03] border border-black/[0.05] text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-8"
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-brand-pink animate-pulse" />
+              Revolutionizing Global Procurement
+            </motion.div>
+
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-6xl md:text-8xl font-black text-brand-black leading-tight mb-8 tracking-tighter lg:-ml-1"
+            >
+              Next Gen <br />
+              <span className="text-gradient">Supply Chain</span> <br />
+              Audit Engine.
+            </motion.h1>
+
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-lg md:text-xl text-gray-500 font-medium max-w-xl mx-auto lg:mx-0 mb-12 leading-relaxed"
+            >
+              Unified vendor intelligence, deep-tier visibility, and financial fidelity 
+              powered by proprietary CureVendAI audit neural networks.
+            </motion.p>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="flex flex-col sm:flex-row items-center gap-5 justify-center lg:justify-start"
+            >
+              <Link href="/user/register" className="group relative px-8 py-4 bg-brand-black text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-premium-lg hover:shadow-glow-pink hover:scale-105 transition-all active:scale-95">
+                Initiate Project
+                <ArrowRight size={16} className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <button className="px-8 py-4 bg-white border border-gray-100 text-brand-black font-black uppercase tracking-widest text-xs rounded-2xl shadow-premium-sm hover:bg-gray-50 transition-all flex items-center gap-3 active:scale-95">
+                <PlayCircle size={20} className="text-brand-blue" />
+                Live Demo
+              </button>
+            </motion.div>
+
+            {/* Trusted by section */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="mt-20 pt-10 border-t border-black/[0.03]"
+            >
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-6">Securing the portfolios of</p>
+              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-10 opacity-30 grayscale hover:grayscale-0 transition-all">
+                {['Google', 'Microsoft', 'NVIDIA', 'Amazon'].map(brand => (
+                  <span key={brand} className="text-lg font-black text-brand-black">{brand}</span>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Hero Visual */}
+          <div className="flex-1 relative w-full max-w-2xl lg:max-w-none">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, rotateY: 20 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+              className="relative aspect-square md:aspect-video rounded-[3rem] overflow-hidden glass border-white shadow-premium-lg transition-transform hover:scale-[1.02]"
+            >
+              {/* Dynamic Abstract Visual */}
+              <div className="absolute inset-0 bg-white shadow-[inset_0_0_100px_rgba(0,0,0,0.02)]">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full p-12 flex flex-col justify-center gap-4">
+                  {[1, 2, 3].map(i => (
+                    <motion.div 
+                      key={i}
+                      initial={{ width: '0%', opacity: 0 }}
+                      animate={{ width: `${60 + i * 10}%`, opacity: 1 }}
+                      transition={{ delay: 1.2 + i * 0.2, duration: 1 }}
+                      className={`h-4 rounded-full bg-gradient-to-r ${i === 1 ? 'from-brand-blue' : i === 2 ? 'from-brand-pink' : 'from-brand-yellow'} via-white/50 to-transparent shadow-premium-sm`}
+                    />
+                  ))}
+                  <div className="mt-8 grid grid-cols-2 gap-4">
+                    <div className="h-32 rounded-3xl bg-surface-soft border border-black/[0.02]" />
+                    <div className="h-32 rounded-3xl bg-surface-soft border border-black/[0.02]" />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Floating KPI Cards on image */}
+              <motion.div 
+                animate={{ y: [0, -10, 0] }}
+                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                className="absolute top-1/4 right-10 p-6 glass border-white shadow-premium-lg rounded-3xl"
+              >
+                <TrendingUp size={24} className="text-brand-pink mb-2" />
+                <p className="text-2xl font-black text-brand-black leading-none mb-1">94.2%</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Compliance Delta</p>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer Meta */}
+      <footer className="relative z-10 px-6 lg:px-12 py-10 border-t border-black/[0.03] flex flex-col md:flex-row items-center justify-between gap-6">
+        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">© 2026 CureVendAI Audit Systems. All Rights Reserved.</p>
+        <div className="flex items-center gap-8">
+           {['Privacy', 'Legal', 'Governance', 'Status'].map(item => (
+             <a key={item} href="#" className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-black transition-colors">{item}</a>
+           ))}
         </div>
       </footer>
     </div>

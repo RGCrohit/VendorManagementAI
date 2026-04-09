@@ -1,0 +1,198 @@
+'use client';
+
+
+import { motion } from 'framer-motion';
+import { 
+  Building2, TrendingUp, AlertTriangle, 
+  ArrowUpRight, ArrowDownRight, IndianRupee,
+  Download, Plus, ChevronRight, Activity, ShieldCheck
+} from 'lucide-react';
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from 'recharts';
+
+// ── Demo data ────────────────────────────────────────────────────────────────
+const DASHBOARD_KPIS = [
+  { label: 'Total Managed Spend', value: '₹4.2Cr', icon: IndianRupee,  color: 'text-brand-blue',   bg: 'bg-brand-blue/10',   change: '+12.5%', up: true },
+  { label: 'Active Vendors',     value: '142',     icon: Building2,    color: 'text-brand-pink',   bg: 'bg-brand-pink/10',   change: '+4',     up: true },
+  { label: 'Audit Compliance',   value: '94.2%',   icon: ShieldCheck,  color: 'text-brand-yellow', bg: 'bg-brand-yellow/10', change: '+2.1%',   up: true },
+  { label: 'Critical Risks',     value: '6',       icon: AlertTriangle, color: 'text-brand-pink',   bg: 'bg-brand-pink/10',   change: '-2',     up: false },
+];
+
+const ANALYTICS_DATA = [
+  { name: 'Nov', spend: 3200, compliance: 82 },
+  { name: 'Dec', spend: 4000, compliance: 85 },
+  { name: 'Jan', spend: 3000, compliance: 88 },
+  { name: 'Feb', spend: 5000, compliance: 92 },
+  { name: 'Mar', spend: 4500, compliance: 90 },
+  { name: 'Apr (YTD)', spend: 6000, compliance: 94 },
+];
+
+const RECENT_ALERTS = [
+  { id: 1, type: 'RISK',    title: 'Acme Corp compliance expired', time: '2h ago', severity: 'high' },
+  { id: 2, type: 'FINANCE', title: 'Invoice deviation detected: ₹2.4L', time: '5h ago', severity: 'medium' },
+  { id: 3, type: 'SYSTEM',  title: 'New vendor "Delta Tech" onboarded', time: '8h ago', severity: 'low' },
+];
+
+export default function AdminDashboard() {
+  return (
+    <div className="space-y-8 animate-slide-in">
+      
+      {/* ── Dashboard Header ─────────────────────────────────────────── */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-4xl font-black text-brand-black tracking-tighter mb-2">Audit Intelligence</h1>
+          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Real-time supply chain fidelity center • 6-Month Review</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-black transition-all shadow-premium-sm active:scale-95">
+             <Download size={16} /> Portfolio Export
+          </button>
+          <button className="flex items-center gap-2 px-6 py-3 bg-brand-black text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-premium-lg hover:shadow-glow-pink transition-all active:scale-95">
+             <Plus size={16} /> New Asset Audit
+          </button>
+        </div>
+      </div>
+
+      {/* ── KPI Grid ─────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {DASHBOARD_KPIS.map((kpi, i) => {
+          const Icon = kpi.icon;
+          return (
+            <motion.div 
+              key={kpi.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -5 }}
+              className="glass p-6 border-white bg-white/40 group cursor-pointer"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className={`p-3 rounded-2xl ${kpi.bg} shadow-premium-sm group-hover:scale-110 transition-transform`}>
+                  <Icon size={20} className={kpi.color} />
+                </div>
+                <div className={`flex items-center gap-1 text-[10px] font-black uppercase ${kpi.up ? 'text-brand-blue' : 'text-brand-pink'}`}>
+                  {kpi.up ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                  {kpi.change}
+                </div>
+              </div>
+              <p className="text-3xl font-black text-brand-black mb-1">{kpi.value}</p>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{kpi.label}</p>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* ── Visual Analytics Center ───────────────────────────────────── */}
+      <div className="grid lg:grid-cols-3 gap-8">
+        
+        {/* Main Chart */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4 }}
+          className="lg:col-span-2 glass p-8 border-white bg-white/60 shadow-premium-lg"
+        >
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <h2 className="text-xl font-black text-brand-black tracking-tight">Ecosystem Velocity</h2>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Audit spend vs Enterprise Risk Index</p>
+            </div>
+            <div className="flex items-center gap-2 p-1 bg-surface-soft rounded-xl border border-black/[0.03]">
+              <button className="px-3 py-1.5 bg-white text-[10px] font-black uppercase tracking-widest text-brand-black rounded-lg shadow-sm">6-Month View</button>
+              <button className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-black transition">Full Year</button>
+            </div>
+          </div>
+          
+          <div className="h-[350px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={ANALYTICS_DATA}>
+                <defs>
+                  <linearGradient id="colorSpend" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#4DC8F0" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#4DC8F0" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorCompliance" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#E91E84" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#E91E84" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
+                />
+                <YAxis hide />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#fff', 
+                    borderRadius: '1.5rem', 
+                    border: 'none', 
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+                    padding: '1.5rem'
+                  }}
+                  itemStyle={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="spend" 
+                  stroke="#4DC8F0" 
+                  strokeWidth={4}
+                  fillOpacity={1} 
+                  fill="url(#colorSpend)" 
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="compliance" 
+                  stroke="#E91E84" 
+                  strokeWidth={4}
+                  fillOpacity={1} 
+                  fill="url(#colorCompliance)" 
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        {/* Intelligence Feed */}
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.6 }}
+          className="glass p-8 border-white bg-white/60 shadow-premium-lg flex flex-col"
+        >
+          <div className="flex items-center justify-between mb-8">
+             <h2 className="text-xl font-black text-brand-black tracking-tight">Active Signals</h2>
+             <Activity size={20} className="text-brand-pink" />
+          </div>
+
+          <div className="flex-1 space-y-6">
+            {RECENT_ALERTS.map((alert) => (
+              <div key={alert.id} className="p-4 rounded-3xl bg-surface-soft border border-black/[0.02] hover:bg-white transition-all group shadow-sm cursor-pointer">
+                <div className="flex items-start justify-between mb-3">
+                  <span className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                    alert.severity === 'high' ? 'bg-red-50 text-brand-pink ring-1 ring-red-100' : 
+                    alert.severity === 'medium' ? 'bg-amber-50 text-brand-yellow ring-1 ring-amber-100' : 'bg-blue-50 text-brand-blue ring-1 ring-blue-100'
+                  }`}>
+                    {alert.type}
+                  </span>
+                  <span className="text-[10px] font-bold text-gray-400">{alert.time}</span>
+                </div>
+                <p className="text-sm font-bold text-brand-black group-hover:text-brand-blue transition mb-3 leading-snug">{alert.title}</p>
+                <div className="flex items-center justify-end">
+                   <ChevronRight size={14} className="text-gray-300 group-hover:text-brand-black transition-colors" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button className="w-full mt-8 py-4 bg-brand-black text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:shadow-glow-pink transition-all active:scale-95">
+             Audit Queue Master
+          </button>
+        </motion.div>
+      </div>
+    </div>
+  );
+}

@@ -3,7 +3,7 @@
 ## Full Project Structure
 
 ```
-procurai/                                    # Root directory
+curevendai/                                    # Root directory
 ├── 📄 Configuration Files in Root
 │   ├── package.json                        # Frontend dependencies (60+ packages)
 │   ├── tsconfig.json                       # TypeScript strict mode config

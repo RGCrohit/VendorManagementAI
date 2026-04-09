@@ -1,277 +1,199 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { signUpVendor } from '@/lib/auth/supabase';
-import { BuildingIcon, Mail, Lock, FileText, AlertCircle, Loader2, Upload } from 'lucide-react';
+import Image from 'next/image';
+import { 
+  Building2, Mail, Lock, FileText, 
+  MapPin, CheckCircle, ChevronRight, ChevronLeft,
+  Camera, Upload, ShieldCheck, AlertCircle, Loader2, Zap, ScanLine
+} from 'lucide-react';
 
-export default function VendorRegister() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    email: '',
-    companyName: '',
-    gstNumber: '',
-    ifscCode: '',
-    password: '',
-    confirmPassword: '',
-  });
-  const [chequeFile, setChequeFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+export default function VendorRegistration() {
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  
+  // Form values for auto-fill demo
+  const [entityName, setEntityName] = useState('');
+  const [gstNum, setGstNum] = useState('');
+  const [isScanning, setIsScanning] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleNext = () => setStep(s => s + 1);
+  const handleBack = () => setStep(s => s - 1);
+
+  const triggerAutoFill = () => {
+    setIsScanning(true);
+    setTimeout(() => {
+      setEntityName('Apex Industrial Fab Lab');
+      setGstNum('27AAPCT4412H1Z5');
+      setIsScanning(false);
+    }, 3000);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      setChequeFile(e.target.files[0]);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
     setLoading(true);
-
-    try {
-      const { user } = await signUpVendor(formData.email, formData.password, formData.companyName);
-      if (user) {
-        router.push(`/vendor/login?email=${formData.email}`);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed');
-    } finally {
+    setTimeout(() => {
       setLoading(false);
-    }
+      setSuccess(true);
+    }, 2000);
   };
+
+  if (success) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center px-4">
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md w-full text-center">
+          <div className="w-24 h-24 bg-green-50 text-green-500 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-premium-lg">
+            <CheckCircle size={48} />
+          </div>
+          <h1 className="text-3xl font-black text-brand-black mb-4">Verification Active</h1>
+          <p className="text-gray-500 font-medium mb-8 leading-relaxed">
+            Your telemetry has been matched via **Neural OCR**. 
+            CureVendAI governance is now syncing your node to the global ledger.
+          </p>
+          <Link href="/" className="inline-block px-10 py-4 bg-brand-black text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-premium-lg active:scale-95 transition-all">
+            Registry Home
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-dark-navy text-white flex items-center justify-center px-4 py-8">
-      {/* Animated background */}
+    <div className="min-h-screen bg-white text-brand-black flex items-center justify-center py-20 px-4 relative overflow-hidden">
+      
       <div className="fixed inset-0 -z-10">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-blue/5 rounded-full filter blur-[100px] animate-blob" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-brand-yellow/5 rounded-full filter blur-[100px] animate-blob" style={{ animationDelay: '2s' }} />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        <div className="glass p-8 md:p-12 rounded-2xl">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary-blue to-primary-violet bg-clip-text text-transparent">
-              ProcurAI
-            </h1>
-            <p className="text-gray-400">Vendor Registration</p>
-            <p className="text-sm text-gray-500 mt-2">Step {step} of 2</p>
-          </div>
-
-          <div className="w-full bg-white/5 rounded-full h-1 mb-6 overflow-hidden">
-            <div
-              className="bg-gradient-to-r from-primary-blue to-primary-violet h-full transition-all"
-              style={{ width: `${(step / 2) * 100}%` }}
-            />
-          </div>
-
-          {error && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3"
-            >
-              <AlertCircle size={20} className="text-red-400 mt-0.5 flex-shrink-0" />
-              <p className="text-red-300 text-sm">{error}</p>
-            </motion.div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {step === 1 ? (
-              <>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
-                    Company Name
-                  </label>
-                  <div className="relative">
-                    <BuildingIcon className="absolute left-3 top-3 text-gray-500" size={20} />
-                    <input
-                      type="text"
-                      name="companyName"
-                      value={formData.companyName}
-                      onChange={handleInputChange}
-                      placeholder="Your Company"
-                      required
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-blue transition text-white placeholder-gray-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
-                    Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 text-gray-500" size={20} />
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="company@email.com"
-                      required
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-blue transition text-white placeholder-gray-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
-                    GST Number
-                  </label>
-                  <input
-                    type="text"
-                    name="gstNumber"
-                    value={formData.gstNumber}
-                    onChange={handleInputChange}
-                    placeholder="27AAPCT1234H1Z5"
-                    required
-                    className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-blue transition text-white placeholder-gray-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
-                    IFSC Code
-                  </label>
-                  <input
-                    type="text"
-                    name="ifscCode"
-                    value={formData.ifscCode}
-                    onChange={handleInputChange}
-                    placeholder="SBIN0001234"
-                    required
-                    className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-blue transition text-white placeholder-gray-500"
-                  />
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="w-full py-2.5 mt-6 bg-gradient-to-r from-primary-blue to-primary-violet rounded-lg font-semibold hover:shadow-glow transition-all"
-                >
-                  Continue
-                </button>
-              </>
-            ) : (
-              <>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 text-gray-500" size={20} />
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      placeholder="••••••••"
-                      required
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-blue transition text-white placeholder-gray-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
-                    Confirm Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 text-gray-500" size={20} />
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      placeholder="••••••••"
-                      required
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-blue transition text-white placeholder-gray-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
-                    Cancelled Cheque (PDF/Image)
-                  </label>
-                  <label className="flex items-center justify-center px-4 py-4 bg-white/5 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:border-primary-blue transition">
-                    <div className="text-center">
-                      <Upload size={24} className="mx-auto mb-2 text-gray-400" />
-                      <p className="text-sm text-gray-400">
-                        {chequeFile ? chequeFile.name : 'Click to upload'}
-                      </p>
-                    </div>
-                    <input
-                      type="file"
-                      onChange={handleFileChange}
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      required
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-
-                <div className="flex gap-4 mt-6">
-                  <button
-                    type="button"
-                    onClick={() => setStep(1)}
-                    className="flex-1 py-2.5 rounded-lg border border-white/10 font-semibold hover:bg-white/5 transition"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="flex-1 py-2.5 bg-gradient-to-r from-primary-blue to-primary-violet rounded-lg font-semibold hover:shadow-glow transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 size={20} className="animate-spin" />
-                        Creating account...
-                      </>
-                    ) : (
-                      'Register'
-                    )}
-                  </button>
-                </div>
-              </>
-            )}
-          </form>
-
-          {step === 1 && (
-            <div className="mt-6 text-center text-sm text-gray-400">
-              <p>Already registered?</p>
-              <Link href="/vendor/login" className="text-primary-blue hover:text-primary-violet transition">
-                Sign in here
-              </Link>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-2xl">
+        <div className="text-center mb-12">
+          <Link href="/" className="inline-block mb-6 group">
+            <div className="w-16 h-16 rounded-2xl bg-white shadow-premium-md flex items-center justify-center p-2 group-hover:scale-110 transition-transform border border-black/[0.03]">
+              <Image src="/logo.png" alt="CureVendAI" width={48} height={48} />
             </div>
-          )}
+          </Link>
+          <h1 className="text-4xl font-black text-brand-black tracking-tighter mb-2">Partner Certification</h1>
+          <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Step {step} of 3 • {step === 1 ? 'Enterprise Identity' : step === 2 ? 'KYC Mastery' : 'Protocol Entry'}</p>
         </div>
 
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-gray-400 hover:text-primary-blue transition">
-            ← Back to home
+        <div className="glass p-8 md:p-12 rounded-[3.5rem] bg-white border-white shadow-premium-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gray-50">
+             <motion.div className="h-full bg-brand-pink" initial={{ width: '33.3%' }} animate={{ width: `${(step / 3) * 100}%` }} />
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-8 pt-4">
+            <AnimatePresence mode="wait">
+              {step === 1 && (
+                <motion.div key="step1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="space-y-6">
+                  <div className="p-6 bg-brand-blue/5 border border-brand-blue/20 rounded-[2rem] flex items-center justify-between mb-4">
+                     <p className="text-[10px] font-black text-brand-blue uppercase tracking-widest">Optional: Auto-fill via Master PDF</p>
+                     <button type="button" onClick={triggerAutoFill} className="px-4 py-2 bg-brand-blue text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-premium-sm">
+                        {isScanning ? <Loader2 size={12} className="animate-spin" /> : <ScanLine size={12} className="inline-block mr-2" />}
+                        Quick Scan
+                     </button>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Legal Entity Name</label>
+                       <div className="relative">
+                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                        <input type="text" value={entityName} onChange={e => setEntityName(e.target.value)} placeholder="Acme Solutions Ltd" required className="w-full pl-12 pr-4 py-4 bg-surface-soft border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/10 transition outline-none" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Industry Sector</label>
+                      <div className="relative">
+                        <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                        <input type="text" placeholder="IT Services / Mfg" required className="w-full pl-12 pr-4 py-4 bg-surface-soft border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/10 transition outline-none" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Gst / Tax Identifier</label>
+                    <div className="relative">
+                      <FileText className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                      <input type="text" value={gstNum} onChange={e => setGstNum(e.target.value)} placeholder="27AAPCT..." required className="w-full pl-12 pr-4 py-4 bg-surface-soft border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/10 transition outline-none" />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {step === 2 && (
+                <motion.div key="step2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="space-y-8">
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Registrant Photo</label>
+                       <div className="aspect-square rounded-[2.5rem] bg-surface-soft border-2 border-dashed border-gray-100 flex flex-col items-center justify-center gap-4 group hover:bg-white hover:border-brand-blue transition-all cursor-pointer relative overflow-hidden">
+                          <Camera size={40} className="text-gray-300 group-hover:text-brand-blue transition-colors" />
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Facial Match Sync</p>
+                          <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" />
+                       </div>
+                    </div>
+                    <div className="space-y-4">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">PAN Master Doc</label>
+                       <div className="aspect-square rounded-[2.5rem] bg-surface-soft border-2 border-dashed border-gray-100 flex flex-col items-center justify-center gap-4 group hover:bg-white hover:border-brand-pink transition-all cursor-pointer relative overflow-hidden">
+                          <Upload size={40} className="text-gray-300 group-hover:text-brand-pink transition-colors" />
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Trigger Neural OCR</p>
+                          <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={triggerAutoFill} />
+                       </div>
+                    </div>
+                  </div>
+                  <div className="p-6 bg-blue-50/50 rounded-3xl border border-blue-100 flex items-start gap-4">
+                     <ShieldCheck size={24} className="text-brand-blue" />
+                     <p className="text-[10px] font-medium text-blue-600/80 leading-relaxed uppercase tracking-tighter">
+                        Uploading your PAN will **automatically trigger** the CureVendAI extraction engine to verify your registry data.
+                     </p>
+                  </div>
+                </motion.div>
+              )}
+
+              {step === 3 && (
+                <motion.div key="step3" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Admin Email</label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                      <input type="email" placeholder="gov@partner.ai" required className="w-full pl-12 pr-4 py-4 bg-surface-soft border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/5 transition outline-none" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Secure Node Key</label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                      <input type="password" placeholder="••••••••" required className="w-full pl-12 pr-4 py-4 bg-surface-soft border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-pink/5 transition outline-none" />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="flex items-center gap-4 pt-4">
+              {step > 1 && (
+                <button type="button" onClick={handleBack} className="flex-1 py-5 bg-surface-soft text-gray-400 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-gray-100 transition-all flex items-center justify-center gap-2">
+                  <ChevronLeft size={16} /> Previous
+                </button>
+              )}
+              {step < 3 ? (
+                <button type="button" onClick={handleNext} className="flex-[2] py-5 bg-brand-black text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:shadow-glow transition-all flex items-center justify-center gap-2 active:scale-95">
+                  Confirm & Advance <ChevronRight size={16} />
+                </button>
+              ) : (
+                <button type="submit" disabled={loading} className="flex-[2] py-5 bg-brand-black text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:shadow-glow-pink transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95">
+                  {loading ? <Loader2 size={16} className="animate-spin" /> : 'Finalize Sync'}
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+
+        <div className="mt-8 text-center">
+          <Link href="/vendor/login" className="text-[10px] text-gray-400 hover:text-brand-black uppercase tracking-[0.3em] font-black transition">
+            ← Synchronize Existing Node
           </Link>
         </div>
       </motion.div>
