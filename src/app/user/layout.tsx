@@ -82,6 +82,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
        source.onended = () => setIsSpeaking(false);
        source.start(0);
     } catch (err) {
+       console.error("Playback error:", err);
        setIsSpeaking(false);
     }
   };
@@ -95,42 +96,52 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     try {
       const responseText = await queryCureVendAI(text);
       
-      // JSON Parsing for Actions
-      try {
-        if (responseText.startsWith('{') && responseText.endsWith('}')) {
-          const actionData = JSON.parse(responseText);
-          
-          if (actionData.action === 'SEND_EMAIL') {
-             const { data: { session } } = await supabase.auth.getSession();
-             const res = await sendEmail({ to: actionData.to, subject: actionData.subject, message: actionData.body, googleToken: session?.provider_token });
-             const confirmation = res.success ? `✅ Email sent to ${actionData.to}.` : `❌ Failed to send email: ${res.error}`;
-             setChatHistory(prev => [...prev, { role: 'bot', text: confirmation }]);
-             await playVoice(confirmation);
-          } 
-          else if (actionData.action === 'SCHEDULE_MEETING') {
-             const res = await scheduleMeetingAction({ title: actionData.title, date: actionData.date, time: actionData.time });
-             const confirmation = res.success ? `🗓️ Meeting "${actionData.title}" scheduled for ${actionData.date} at ${actionData.time}.` : `❌ Failed to schedule: ${res.error}`;
-             setChatHistory(prev => [...prev, { role: 'bot', text: confirmation }]);
-             await playVoice(confirmation);
-          }
-          setIsProcessing(false);
-          return;
-        }
-      } catch (e) { /* Not an action JSON */ }
+      // Robust Regex for JSON Extraction
+      const jsonMatch = responseText.match(/\{.*\}/s);
+      
+      if (jsonMatch) {
+         try {
+            const actionData = JSON.parse(jsonMatch[0]);
+            
+            if (actionData.action === 'SEND_EMAIL') {
+               const { data: { session } } = await supabase.auth.getSession();
+               const res = await sendEmail({ to: actionData.to, subject: actionData.subject, message: actionData.body, googleToken: session?.provider_token });
+               const confirmation = res.success ? `✅ Email sent to ${actionData.to}.` : `❌ Failed to send email: ${res.error}`;
+               setChatHistory(prev => [...prev, { role: 'bot', text: confirmation }]);
+               setIsProcessing(false);
+               await playVoice(confirmation);
+               return;
+            } 
+            else if (actionData.action === 'SCHEDULE_MEETING') {
+               const res = await scheduleMeetingAction({ title: actionData.title, date: actionData.date, time: actionData.time });
+               const confirmation = res.success ? `🗓️ Meeting "${actionData.title}" scheduled for ${actionData.date} at ${actionData.time}.` : `❌ Failed to schedule: ${res.error}`;
+               setChatHistory(prev => [...prev, { role: 'bot', text: confirmation }]);
+               setIsProcessing(false);
+               await playVoice(confirmation);
+               return;
+            }
+         } catch (e) {
+            console.error("JSON Parse Error:", e);
+         }
+      }
 
       setChatHistory(prev => [...prev, { role: 'bot', text: responseText }]);
+      setIsProcessing(false);
       await playVoice(responseText);
 
     } catch (error) {
+      console.error("Agent Error:", error);
       setChatHistory(prev => [...prev, { role: 'bot', text: "I encountered an error processing that command." }]);
-    } finally {
       setIsProcessing(false);
     }
   };
 
   const startListening = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitRecognition;
+    if (!SpeechRecognition) {
+       alert("Speech recognition not supported locally.");
+       return;
+    }
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-IN';
     recognition.start();
