@@ -81,7 +81,7 @@ export default function Home() {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/[0.03] border border-black/[0.05] text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-8"
             >
               <div className="w-1.5 h-1.5 rounded-full bg-brand-pink animate-pulse" />
-              Revolutionizing Global Procurement
+              Revolutionizing Vendor Management
             </motion.div>
 
             <motion.h1 
@@ -91,8 +91,8 @@ export default function Home() {
               className="text-6xl md:text-8xl font-black text-brand-black leading-tight mb-8 tracking-tighter lg:-ml-1"
             >
               Next Gen <br />
-              <span className="text-gradient">Supply Chain</span> <br />
-              Audit Engine.
+              <span className="text-gradient">Vendor</span> <br />
+              Management.
             </motion.h1>
 
             <motion.p 
@@ -101,8 +101,8 @@ export default function Home() {
               transition={{ delay: 0.4 }}
               className="text-lg md:text-xl text-gray-500 font-medium max-w-xl mx-auto lg:mx-0 mb-12 leading-relaxed"
             >
-              Unified vendor intelligence, deep-tier visibility, and financial fidelity 
-              powered by proprietary CureVendAI audit neural networks.
+              Manage your vendors, track project budgets, process payments, 
+              and schedule meetings — all from one intelligent platform.
             </motion.p>
 
             <motion.div 
@@ -112,7 +112,7 @@ export default function Home() {
               className="flex flex-col sm:flex-row items-center gap-5 justify-center lg:justify-start"
             >
               <Link href="/user/register" className="group relative px-8 py-4 bg-brand-black text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-premium-lg hover:shadow-glow-pink hover:scale-105 transition-all active:scale-95">
-                Initiate Project
+                Get Started
                 <ArrowRight size={16} className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
               <button className="px-8 py-4 bg-white border border-gray-100 text-brand-black font-black uppercase tracking-widest text-xs rounded-2xl shadow-premium-sm hover:bg-gray-50 transition-all flex items-center gap-3 active:scale-95">
@@ -128,7 +128,7 @@ export default function Home() {
               transition={{ delay: 1 }}
               className="mt-20 pt-10 border-t border-black/[0.03]"
             >
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-6">Securing the portfolios of</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-6">Trusted by teams at</p>
               <div className="flex flex-wrap justify-center lg:justify-start items-center gap-10 opacity-30 grayscale hover:grayscale-0 transition-all">
                 {['Google', 'Microsoft', 'NVIDIA', 'Amazon'].map(brand => (
                   <span key={brand} className="text-lg font-black text-brand-black">{brand}</span>
@@ -172,7 +172,7 @@ export default function Home() {
               >
                 <TrendingUp size={24} className="text-brand-pink mb-2" />
                 <p className="text-2xl font-black text-brand-black leading-none mb-1">94.2%</p>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Compliance Delta</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Vendor Score</p>
               </motion.div>
             </motion.div>
           </div>
@@ -181,7 +181,7 @@ export default function Home() {
 
       {/* Footer Meta */}
       <footer className="relative z-10 px-6 lg:px-12 py-10 border-t border-black/[0.03] flex flex-col md:flex-row items-center justify-between gap-6">
-        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">© 2026 CureVendAI Audit Systems. All Rights Reserved.</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">© 2026 CureVendAI. All Rights Reserved.</p>
         <div className="flex items-center gap-8">
            {['Privacy', 'Legal', 'Governance', 'Status'].map(item => (
              <a key={item} href="#" className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-black transition-colors">{item}</a>

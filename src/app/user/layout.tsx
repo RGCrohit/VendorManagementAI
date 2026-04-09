@@ -9,19 +9,20 @@ import {
   LayoutDashboard, Building2, FolderKanban, Wallet, UserCheck,
   FileBarChart, Bot, ChevronRight, Search, Bell,
   Settings, LogOut, Menu, X, Shield, Send, Mic, Loader2, Network,
-  CreditCard, Ticket, CheckCircle, Smartphone
+  CreditCard, Ticket, CheckCircle, Smartphone, CalendarDays
 } from 'lucide-react';
 import { signOut } from '@/lib/auth/supabase';
 import { useAuth } from '@/lib/hooks';
 import { queryCureVendAI } from '@/lib/ai-agent';
 
 const NAV_ITEMS = [
-  { name: 'Analytics',  href: '/user/dashboard', icon: LayoutDashboard },
+  { name: 'Dashboard',  href: '/user/dashboard', icon: LayoutDashboard },
   { name: 'Vendors',    href: '/user/vendors',   icon: Building2 },
   { name: 'Projects',   href: '/user/projects',  icon: FolderKanban },
   { name: 'Finance',    href: '/user/finance',    icon: Wallet },
+  { name: 'Meetings',   href: '/user/meetings',   icon: CalendarDays },
   { name: 'Onboarding', href: '/user/onboarding', icon: UserCheck },
-  { name: 'Reporting',  href: '/user/reports',    icon: FileBarChart, sub: 'Governance Hierarchy' },
+  { name: 'Reports',    href: '/user/reports',    icon: FileBarChart, sub: 'Org Chart' },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -31,7 +32,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const [isListening, setIsListening] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([
-    { role: 'bot', text: 'CureVend HQ Node Online. System fidelity verified across 3 regional HQs. How can I assist with your governance audit?' }
+    { role: 'bot', text: 'Hi! I\'m your CureVendAI assistant. I can help you check vendor details, project budgets, payment status, and more. Just ask me anything!' }
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeVoiceStatus, setActiveVoiceStatus] = useState<string | null>(null);
@@ -70,7 +71,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     recognition.maxAlternatives = 1;
 
     setIsListening(true);
-    setActiveVoiceStatus('Listening to Governance Command...');
+    setActiveVoiceStatus('Listening...');
     recognition.start();
 
     recognition.onresult = (event: any) => {
@@ -110,30 +111,30 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       const t = text.toLowerCase();
       
       // 1. RE-ROUTING LOGIC (The "Agent" part)
-      if (t.includes('pay') || t.includes('settle')) {
-          const resText = "Initializing Razorpay Synchronization Node... Redirecting to Finance Portal.";
+      if (t.includes('pay') || t.includes('settle') || t.includes('invoice')) {
+          const resText = "Sure! Taking you to the Finance page now.";
           setChatHistory(prev => [...prev, { role: 'bot', text: resText }]);
           playVoice(resText);
           setTimeout(() => {
             router.push('/user/finance');
             setIsChatOpen(false);
-          }, 3000);
-      } else if (t.includes('ticket') || t.includes('problem')) {
-          const resText = "Scanning Project Nodes for anomalies... Launching QC Ticket Interface.";
+          }, 2000);
+      } else if (t.includes('ticket') || t.includes('problem') || t.includes('issue')) {
+          const resText = "Opening your Projects page to check on that.";
           setChatHistory(prev => [...prev, { role: 'bot', text: resText }]);
           playVoice(resText);
           setTimeout(() => {
             router.push('/user/projects'); 
             setIsChatOpen(false);
-          }, 3000);
-      } else if (t.includes('reporting') || t.includes('org')) {
-          const resText = "Synthesizing Governance Hierarchy... Switching to Full Page Map.";
+          }, 2000);
+      } else if (t.includes('report') || t.includes('org') || t.includes('team')) {
+          const resText = "Here's the Reports section for you.";
           setChatHistory(prev => [...prev, { role: 'bot', text: resText }]);
           playVoice(resText);
           setTimeout(() => {
             router.push('/user/reports');
             setIsChatOpen(false);
-          }, 3000);
+          }, 2000);
       } else {
           // Default: Query DB through the AI Agent Brain
           const response = await queryCureVendAI(text);
@@ -141,7 +142,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           playVoice(response);
       }
     } catch (err) {
-      const errText = "Governance Override: Real-time DB sync disrupted.";
+      const errText = "Sorry, I couldn't connect to the database right now. Please try again.";
       setChatHistory(prev => [...prev, { role: 'bot', text: errText }]);
       playVoice(errText);
     } finally {
@@ -165,7 +166,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-black text-brand-black tracking-tighter">CureVendAI</span>
-                <span className="text-[8px] font-black uppercase tracking-widest text-brand-blue">Global Enterprise</span>
+                <span className="text-[8px] font-black uppercase tracking-widest text-brand-blue">Workspace</span>
               </div>
             </div>
 
@@ -198,7 +199,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 <Settings size={14} className="text-gray-300 group-hover:text-brand-black" />
               </Link>
               <button onClick={async () => { await signOut(); router.push('/user/login'); }} className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-4 rounded-2xl border border-gray-100 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-pink hover:bg-red-50/50 transition-all">
-                <LogOut size={14} /> System Exit
+                <LogOut size={14} /> Sign Out
               </button>
             </div>
           </motion.aside>
@@ -214,7 +215,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </button>
             <div className="hidden lg:flex items-center gap-3">
               <Shield size={16} className="text-brand-blue" />
-              <span className="text-xs font-black text-brand-black uppercase tracking-[0.3em]">Governance Infrastructure</span>
+              <span className="text-xs font-black text-brand-black uppercase tracking-[0.3em]">Workspace</span>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -248,8 +249,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     <Bot size={32} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-blue">CureVend HQ Intelligence</p>
-                    <p className="text-sm font-black text-white/90">Agentic Data Search Protocol</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-blue">CureVendAI Assistant</p>
+                    <p className="text-sm font-black text-white/90">Ask me anything about your data</p>
                   </div>
                 </div>
                 <button onClick={() => setIsChatOpen(false)} className="relative z-10 p-2 hover:bg-white/10 rounded-xl transition"><X size={20} /></button>
@@ -293,7 +294,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     <Mic size={24} />
                   </button>
                   <input type="text" value={chatMessage} onChange={(e) => setChatMessage(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleAgenticCommand(chatMessage)}
-                    placeholder="Search ledger, pay, or raise tickets..." className="flex-1 bg-surface-soft px-6 py-5 rounded-[1.8rem] text-[12px] font-bold border border-transparent focus:bg-white focus:border-brand-blue/20 outline-none transition"
+                    placeholder="Ask about vendors, projects, payments..." className="flex-1 bg-surface-soft px-6 py-5 rounded-[1.8rem] text-[12px] font-bold border border-transparent focus:bg-white focus:border-brand-blue/20 outline-none transition"
                   />
                   <button onClick={() => handleAgenticCommand(chatMessage)} className="p-5 bg-brand-black text-white rounded-[1.8rem] hover:shadow-glow transition-all active:scale-95">
                     <Send size={24} />

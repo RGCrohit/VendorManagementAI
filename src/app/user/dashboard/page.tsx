@@ -13,25 +13,25 @@ import {
 
 // ── Demo data ────────────────────────────────────────────────────────────────
 const DASHBOARD_KPIS = [
-  { label: 'Total Managed Spend', value: '₹4.2Cr', icon: IndianRupee,  color: 'text-brand-blue',   bg: 'bg-brand-blue/10',   change: '+12.5%', up: true },
-  { label: 'Active Vendors',     value: '142',     icon: Building2,    color: 'text-brand-pink',   bg: 'bg-brand-pink/10',   change: '+4',     up: true },
-  { label: 'Audit Compliance',   value: '94.2%',   icon: ShieldCheck,  color: 'text-brand-yellow', bg: 'bg-brand-yellow/10', change: '+2.1%',   up: true },
-  { label: 'Critical Risks',     value: '6',       icon: AlertTriangle, color: 'text-brand-pink',   bg: 'bg-brand-pink/10',   change: '-2',     up: false },
+  { label: 'Total Spend',       value: '₹4.2Cr', icon: IndianRupee,  color: 'text-brand-blue',   bg: 'bg-brand-blue/10',   change: '+12.5%', up: true },
+  { label: 'Active Vendors',    value: '142',     icon: Building2,    color: 'text-brand-pink',   bg: 'bg-brand-pink/10',   change: '+4',     up: true },
+  { label: 'Vendor Score',      value: '94.2%',   icon: ShieldCheck,  color: 'text-brand-yellow', bg: 'bg-brand-yellow/10', change: '+2.1%',  up: true },
+  { label: 'Open Issues',       value: '6',       icon: AlertTriangle, color: 'text-brand-pink',  bg: 'bg-brand-pink/10',   change: '-2',     up: false },
 ];
 
 const ANALYTICS_DATA = [
-  { name: 'Nov', spend: 3200, compliance: 82 },
-  { name: 'Dec', spend: 4000, compliance: 85 },
-  { name: 'Jan', spend: 3000, compliance: 88 },
-  { name: 'Feb', spend: 5000, compliance: 92 },
-  { name: 'Mar', spend: 4500, compliance: 90 },
-  { name: 'Apr (YTD)', spend: 6000, compliance: 94 },
+  { name: 'Nov', spend: 3200, score: 82 },
+  { name: 'Dec', spend: 4000, score: 85 },
+  { name: 'Jan', spend: 3000, score: 88 },
+  { name: 'Feb', spend: 5000, score: 92 },
+  { name: 'Mar', spend: 4500, score: 90 },
+  { name: 'Apr (YTD)', spend: 6000, score: 94 },
 ];
 
 const RECENT_ALERTS = [
-  { id: 1, type: 'RISK',    title: 'Acme Corp compliance expired', time: '2h ago', severity: 'high' },
-  { id: 2, type: 'FINANCE', title: 'Invoice deviation detected: ₹2.4L', time: '5h ago', severity: 'medium' },
-  { id: 3, type: 'SYSTEM',  title: 'New vendor "Delta Tech" onboarded', time: '8h ago', severity: 'low' },
+  { id: 1, type: 'VENDOR',  title: 'Acme Corp documents expired — needs renewal', time: '2h ago', severity: 'high' },
+  { id: 2, type: 'PAYMENT', title: 'Invoice mismatch detected: ₹2.4L', time: '5h ago', severity: 'medium' },
+  { id: 3, type: 'UPDATE',  title: 'New vendor "Delta Tech" registered', time: '8h ago', severity: 'low' },
 ];
 
 export default function AdminDashboard() {
@@ -41,15 +41,15 @@ export default function AdminDashboard() {
       {/* ── Dashboard Header ─────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-black text-brand-black tracking-tighter mb-2">Audit Intelligence</h1>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Real-time supply chain fidelity center • 6-Month Review</p>
+          <h1 className="text-4xl font-black text-brand-black tracking-tighter mb-2">Dashboard</h1>
+          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Overview of your vendors, projects & payments • Last 6 Months</p>
         </div>
         <div className="flex items-center gap-3">
           <button className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-black transition-all shadow-premium-sm active:scale-95">
-             <Download size={16} /> Portfolio Export
+             <Download size={16} /> Download Report
           </button>
           <button className="flex items-center gap-2 px-6 py-3 bg-brand-black text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-premium-lg hover:shadow-glow-pink transition-all active:scale-95">
-             <Plus size={16} /> New Asset Audit
+             <Plus size={16} /> New Project
           </button>
         </div>
       </div>
@@ -95,11 +95,11 @@ export default function AdminDashboard() {
         >
           <div className="flex items-center justify-between mb-10">
             <div>
-              <h2 className="text-xl font-black text-brand-black tracking-tight">Ecosystem Velocity</h2>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Audit spend vs Enterprise Risk Index</p>
+              <h2 className="text-xl font-black text-brand-black tracking-tight">Spending Trends</h2>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Monthly spend vs vendor performance score</p>
             </div>
             <div className="flex items-center gap-2 p-1 bg-surface-soft rounded-xl border border-black/[0.03]">
-              <button className="px-3 py-1.5 bg-white text-[10px] font-black uppercase tracking-widest text-brand-black rounded-lg shadow-sm">6-Month View</button>
+              <button className="px-3 py-1.5 bg-white text-[10px] font-black uppercase tracking-widest text-brand-black rounded-lg shadow-sm">6 Months</button>
               <button className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-black transition">Full Year</button>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
                     <stop offset="5%" stopColor="#4DC8F0" stopOpacity={0.2}/>
                     <stop offset="95%" stopColor="#4DC8F0" stopOpacity={0}/>
                   </linearGradient>
-                  <linearGradient id="colorCompliance" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#E91E84" stopOpacity={0.2}/>
                     <stop offset="95%" stopColor="#E91E84" stopOpacity={0}/>
                   </linearGradient>
@@ -145,18 +145,18 @@ export default function AdminDashboard() {
                 />
                 <Area 
                   type="monotone" 
-                  dataKey="compliance" 
+                  dataKey="score" 
                   stroke="#E91E84" 
                   strokeWidth={4}
                   fillOpacity={1} 
-                  fill="url(#colorCompliance)" 
+                  fill="url(#colorScore)" 
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </motion.div>
 
-        {/* Intelligence Feed */}
+        {/* Recent Alerts Feed */}
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -164,7 +164,7 @@ export default function AdminDashboard() {
           className="glass p-8 border-white bg-white/60 shadow-premium-lg flex flex-col"
         >
           <div className="flex items-center justify-between mb-8">
-             <h2 className="text-xl font-black text-brand-black tracking-tight">Active Signals</h2>
+             <h2 className="text-xl font-black text-brand-black tracking-tight">Recent Alerts</h2>
              <Activity size={20} className="text-brand-pink" />
           </div>
 
@@ -189,7 +189,7 @@ export default function AdminDashboard() {
           </div>
 
           <button className="w-full mt-8 py-4 bg-brand-black text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:shadow-glow-pink transition-all active:scale-95">
-             Audit Queue Master
+             View All Alerts
           </button>
         </motion.div>
       </div>

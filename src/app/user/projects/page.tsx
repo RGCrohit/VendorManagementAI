@@ -54,8 +54,8 @@ export default function ProjectsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-black text-brand-black tracking-tighter mb-2">Project Governance</h1>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Managing {PROJECTS.length} active audit nodes across sectors</p>
+          <h1 className="text-4xl font-black text-brand-black tracking-tighter mb-2">Projects</h1>
+          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Managing {PROJECTS.length} active projects</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex p-1 bg-surface-soft border border-black/[0.03] rounded-2xl mr-4 shadow-sm">
@@ -70,7 +70,7 @@ export default function ProjectsPage() {
             onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-2 px-8 py-3.5 bg-brand-black text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-premium-lg hover:shadow-glow-pink transition-all active:scale-95"
           >
-             <Plus size={18} /> New Project Node
+             <Plus size={18} /> New Project
           </button>
         </div>
       </div>
@@ -110,7 +110,7 @@ export default function ProjectsPage() {
 
                 <div className="space-y-4 pt-6 border-t border-black/[0.02]">
                   <div className="flex justify-between items-center text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                    <span>Audit Completion</span>
+                    <span>Progress</span>
                     <span className="text-brand-black">{project.completion}%</span>
                   </div>
                   <div className="w-full bg-surface-soft h-2 rounded-full overflow-hidden">
@@ -144,7 +144,7 @@ export default function ProjectsPage() {
             className="glass p-12 bg-white border-white shadow-premium-xl rounded-[3rem] overflow-hidden"
           >
              <div className="flex items-center justify-between mb-10">
-                <h2 className="text-2xl font-black text-brand-black tracking-tighter">Governance Calendar Flow</h2>
+                <h2 className="text-2xl font-black text-brand-black tracking-tighter">Calendar View</h2>
                 <div className="flex items-center gap-4">
                    <button className="p-2 border border-black/[0.05] rounded-xl hover:bg-surface-soft transition"><ChevronRight className="rotate-180" size={20} /></button>
                    <span className="text-sm font-black uppercase tracking-widest text-brand-black cursor-pointer hover:text-brand-blue transition">April 2026</span>
@@ -205,22 +205,22 @@ export default function ProjectsPage() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/40 backdrop-blur-md" />
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative w-full max-w-xl bg-white rounded-[2.5rem] shadow-premium-xl border border-white p-12 overflow-hidden">
                <div className="flex items-center justify-between mb-10">
-                  <h2 className="text-3xl font-black text-brand-black tracking-tighter">Initialize Audit Node</h2>
+                  <h2 className="text-3xl font-black text-brand-black tracking-tighter">Create New Project</h2>
                   <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-surface-soft rounded-xl transition"><X size={20} /></button>
                </div>
                
                <form className="space-y-6">
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Node Designation</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Project Name</label>
                      <input type="text" placeholder="e.g. Project Apollo" className="w-full px-6 py-4 bg-surface-soft border border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/5 outline-none transition" />
                   </div>
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Capital Allocation</label>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Budget</label>
                        <input type="text" placeholder="₹50L" className="w-full px-6 py-4 bg-surface-soft border border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/5 outline-none transition" />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Fiscal Cycle</label>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Financial Year</label>
                        <select className="w-full px-6 py-4 bg-surface-soft border border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-brand-blue/5 outline-none transition appearance-none">
                           <option>2025-26</option>
                           <option>2024-25</option>
@@ -229,9 +229,9 @@ export default function ProjectsPage() {
                   </div>
                   <div className="p-6 bg-blue-50/50 rounded-[2rem] border border-blue-100 flex items-start gap-4">
                      <AlertCircle size={20} className="text-brand-blue" />
-                     <p className="text-[10px] font-medium text-blue-600/80 leading-relaxed uppercase tracking-tighter">New nodes will automatically sync with the CureVend Neural OCR engine & global vendor registry.</p>
+                     <p className="text-[10px] font-medium text-blue-600/80 leading-relaxed uppercase tracking-tighter">New projects will automatically connect with your vendor registry and payment tracking.</p>
                   </div>
-                  <button type="submit" className="w-full py-5 bg-brand-black text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-premium-lg hover:shadow-glow transition-all active:scale-95">Synchronize New Project</button>
+                  <button type="submit" className="w-full py-5 bg-brand-black text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-premium-lg hover:shadow-glow transition-all active:scale-95">Create Project</button>
                </form>
             </motion.div>
           </div>
