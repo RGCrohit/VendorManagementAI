@@ -112,7 +112,7 @@ export default function VendorSupport() {
                        <button className="flex items-center gap-2 px-4 py-2 bg-brand-black text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-premium-md hover:shadow-glow-pink transition-all active:scale-95"><Plus size={14} /> New Ticket</button>
                     </div>
                     <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
-                       {MOCK_TICKETS.map((t, i) => (
+                       {MOCK_TICKETS.map((t) => (
                          <div key={t.id} className="p-5 rounded-[1.5rem] bg-surface-soft hover:bg-white border border-transparent hover:border-black/[0.03] transition-all group flex items-center gap-6 shadow-sm">
                             <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-brand-black group-hover:bg-brand-black group-hover:text-white transition-all"><Ticket size={18} /></div>
                             <div className="flex-1 min-w-0">
