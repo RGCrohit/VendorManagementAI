@@ -157,26 +157,31 @@ export default function VendorPortal() {
 
   // ── Stat Cards ──────────────────────────────────────────────────────────────
   const stats = [
-    { label: 'Active Projects',    value: '—', icon: BarChart3,   color: 'text-primary-blue',   bg: 'bg-primary-blue/10',   change: null },
-    { label: 'Total Invoices',     value: '—', icon: FileText,    color: 'text-purple-400',     bg: 'bg-purple-500/10',     change: null },
-    { label: 'Pending Approval',   value: '—', icon: Clock,       color: 'text-yellow-400',     bg: 'bg-yellow-500/10',     change: null },
-    { label: 'Open Tickets',       value: '—', icon: Ticket,      color: 'text-orange-400',     bg: 'bg-orange-500/10',     change: null },
+    { label: 'Project Assets',    value: '4', icon: BarChart3,   color: 'text-brand-blue',   bg: 'bg-brand-blue/10' },
+    { label: 'Total Invoices',     value: '₹43.0L', icon: FileText,    color: 'text-brand-pink',   bg: 'bg-brand-pink/10' },
+    { label: 'Wait for PM',   value: '₹8.5L', icon: Clock,       color: 'text-brand-yellow', bg: 'bg-brand-yellow/10' },
+    { label: 'Active Alerts',       value: '2', icon: Ticket,      color: 'text-brand-pink',  bg: 'bg-brand-pink/10' },
   ];
 
-  // ── Empty data (will populate from backend API) ─────────────────────────────
-  const projects: {
-    id: number; name: string; pm: string; timeline: string; deadline: string; tat_status: TatStatus; budget_used: number;
-  }[] = [];
+  // ── Sync with New Modules ───────────────────────────────────────────────────
+  const projects: any[] = [
+    { id: 1, name: 'Phoenix Sync', pm: 'Rajesh K.', timeline: 'Q2 2026', deadline: '2026-06-15', tat_status: 'on_track', budget_used: 68 },
+    { id: 2, name: 'Enterprise Audit', pm: 'Sarah J.', timeline: 'Q2 2026', deadline: '2026-04-20', tat_status: 'at_risk', budget_used: 91 },
+  ];
 
-  const invoices: {
-    id: string; project: string; amount: string; date: string; due_date: string; status: InvoiceStatus;
-  }[] = [];
+  const invoices: any[] = [
+    { id: 'INV-7821', project: 'Phoenix Sync', amount: '₹12,40,000', date: '2026-04-05', due_date: '2026-04-20', status: 'paid' },
+    { id: 'INV-7844', project: 'Enterprise Audit', amount: '₹8,50,000', date: '2026-04-10', due_date: '2026-04-25', status: 'submitted' },
+  ];
 
-  const tickets: {
-    id: string; subject: string; project: string; priority: TicketPriority; status: TicketStatus; created_at: string;
-  }[] = [];
+  const tickets: any[] = [
+    { id: 'TKT-102', subject: 'Invoice Payment Delay', project: 'Global Logistics', priority: 'high', status: 'open', created_at: '2026-04-08' },
+  ];
 
-  const milestones: { date: string; label: string; color: string }[] = [];
+  const milestones = [
+    { date: '2026-04-12', label: 'Phoenix Sprint Review', color: 'bg-brand-blue' },
+    { date: '2026-04-20', label: 'Audit Sign-off', color: 'bg-brand-pink' },
+  ];
 
   // ── Loading ─────────────────────────────────────────────────────────────────
   if (loading) {
