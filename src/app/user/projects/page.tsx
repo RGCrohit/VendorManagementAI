@@ -116,35 +116,33 @@ export default function ProjectsPage() {
                 </div>
              </div>
 
-             <div className="flex-1 flex flex-col border border-black/[0.03] rounded-[2rem] overflow-hidden bg-white shadow-sm">
-                <div className="grid grid-cols-7 border-b border-black/[0.03] bg-surface-soft/30">
+             <div className="flex-1 flex flex-col border-[2px] border-black/[0.08] rounded-[2.5rem] overflow-hidden bg-white shadow-premium-lg">
+                <div className="grid grid-cols-7 border-b-[2px] border-black/[0.1] bg-surface-soft/60">
                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                     <div key={day} className="py-2.5 text-center text-[8px] font-black uppercase tracking-[0.2em] text-gray-400">{day}</div>
+                     <div key={day} className="py-4 text-center text-[10px] font-black uppercase tracking-[0.3em] text-brand-black/40">{day}</div>
                    ))}
                 </div>
 
-                <div className="flex-1 grid grid-cols-7 bg-black/[0.01] gap-[1px] min-h-0">
+                <div className="flex-1 grid grid-cols-7 bg-black/[0.06] gap-[2px] min-h-0">
                    {calendarDays.map((date, i) => {
                      const projectsOnDay = projects.filter(p => (p.timeline?.split(' - ')?.[0] || p.timeline) === date.dateStr);
                      const meetingsOnDay = meetings.filter(m => m.meeting_date === date.dateStr);
                      const isToday = new Date().toISOString().split('T')[0] === date.dateStr;
 
                      return (
-                       <div key={i} className={`p-2 bg-white hover:bg-surface-soft/50 transition-all flex flex-col overflow-hidden ${!date.current ? 'bg-surface-soft/20 opacity-40' : ''}`}>
-                          <div className="flex items-center justify-between mb-1 flex-shrink-0">
-                             <span className={`text-[9px] font-black ${isToday ? 'w-5 h-5 bg-brand-black text-white rounded-lg flex items-center justify-center' : 'text-gray-300'}`}>{date.day}</span>
+                       <div key={i} className={`p-4 bg-white hover:bg-brand-blue/[0.02] transition-all flex flex-col overflow-hidden ${!date.current ? 'bg-surface-soft/40 opacity-30 shadow-inner' : ''}`}>
+                          <div className="flex items-center justify-between mb-3 flex-shrink-0">
+                             <span className={`text-[12px] font-black tracking-tighter ${isToday ? 'w-7 h-7 bg-brand-black text-white rounded-lg flex items-center justify-center shadow-premium-lg' : 'text-gray-400'}`}>{date.day}</span>
                           </div>
-                          <div className="flex-1 overflow-y-auto space-y-1 no-scrollbar min-h-0">
-                             {/* Projects Display */}
+                          <div className="flex-1 overflow-y-auto space-y-2 no-scrollbar min-h-0">
                              {projectsOnDay.map(p => (
-                               <div key={p.id} className="p-1.5 bg-brand-blue text-white rounded-lg text-[7px] font-black uppercase tracking-tighter truncate shadow-sm flex items-center gap-1.5 border border-white/10">
-                                  <Building2 size={8} /> {p.name}
+                               <div key={p.id} className="p-2.5 bg-brand-black text-white rounded-xl text-[8px] font-black uppercase tracking-tighter truncate shadow-premium-sm flex items-center gap-2 border border-white/5">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-brand-blue animate-pulse" /> {p.name}
                                </div>
                              ))}
-                             {/* Meetings Display */}
                              {meetingsOnDay.map(m => (
-                               <div key={m.id} className="p-1 px-1.5 bg-brand-pink text-white rounded-lg text-[6px] font-black uppercase tracking-tighter truncate shadow-sm flex items-center gap-1.5 border border-white/10">
-                                  <Video size={8} /> {m.title}
+                               <div key={m.id} className="p-2 px-3 bg-brand-pink text-white rounded-xl text-[8px] font-black uppercase tracking-tighter truncate shadow-premium-sm flex items-center gap-2 border border-white/10">
+                                  <Video size={12} /> {m.title}
                                </div>
                              ))}
                           </div>

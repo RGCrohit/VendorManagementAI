@@ -68,6 +68,22 @@ export default function AdminDashboard() {
            ]);
         }
 
+        // ── NEW: INSERT PROJECTS ──
+        await supabase.from('projects').insert([
+          { name: 'Phoenix Sync', budget: 5000000, spent: 3400000, timeline: '2026-04-05' },
+          { name: 'Enterprise Audit', budget: 8000000, spent: 7800000, timeline: '2026-04-12' },
+          { name: 'Supply Chain AI', budget: 3500000, spent: 120000, timeline: '2026-04-24' },
+          { name: 'Global Logistics', budget: 12000000, spent: 4500000, timeline: '2026-05-10' }
+        ]);
+
+        // ── NEW: INSERT MEETINGS ──
+        await supabase.from('meetings').insert([
+          { title: 'Vendor Strategy', meeting_date: '2026-04-05', status: 'scheduled' },
+          { title: 'Budget Review', meeting_date: '2026-04-12', status: 'scheduled' },
+          { title: 'Sprint Planning', meeting_date: '2026-04-24', status: 'scheduled' },
+          { title: 'Stakeholder Sync', meeting_date: '2026-04-28', status: 'scheduled' }
+        ]);
+
         setSeedSuccess(true);
         setTimeout(() => setSeedSuccess(false), 3000);
       }
