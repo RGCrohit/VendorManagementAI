@@ -58,11 +58,15 @@ export default function AdminDashboard() {
         ]);
         if (error) throw error;
         
-        // Insert some dummy projects
-        await supabase.from('projects').insert([
-          { name: 'Project Phoenix', budget: 5000000, spent: 3400000, timeline: '2025-2026' },
-          { name: 'Enterprise Suite Cloud', budget: 8000000, spent: 7200000, timeline: '2025-2026' }
-        ]);
+        // Insert dummy expenses
+        const { data: vendorList } = await supabase.from('vendors').select('id');
+        if (vendorList && vendorList.length > 0) {
+           await supabase.from('vendor_expenses').insert([
+             { vendor_id: vendorList[0].id, amount: 45000, category: 'Infrastructure', description: 'Cloud server monthly cost', status: 'paid' },
+             { vendor_id: vendorList[0].id, amount: 12000, category: 'Logistics', description: 'Equipment shipping', status: 'pending' },
+             { vendor_id: vendorList[1].id, amount: 89000, category: 'Software', description: 'License renewal', status: 'paid' },
+           ]);
+        }
 
         setSeedSuccess(true);
         setTimeout(() => setSeedSuccess(false), 3000);
