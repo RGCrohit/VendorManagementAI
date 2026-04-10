@@ -23,17 +23,21 @@ export async function queryCureVendAI(prompt: string) {
     const needsData = q.includes('summary') || q.includes('project') || q.includes('vendor') || q.includes('payment') || q.includes('spend') || q.includes('money') || q.includes('org') || q.includes('view') || q.includes('report') || q.includes('hierarchy');
     
     if (needsData) {
-      const [{ data: vendors }, { data: projects }, { data: payments }] = await Promise.all([
+      const [vRes, pRes, pyRes] = await Promise.all([
         supabase.from('vendors').select('*'),
         supabase.from('projects').select('*'),
         supabase.from('payments').select('amount, status, description, invoice_date')
       ]);
 
+      if (vRes.error) throw new Error(`Vendors fetch failed: ${vRes.error.message}`);
+      if (pRes.error) throw new Error(`Projects fetch failed: ${pRes.error.message}`);
+      if (pyRes.error) throw new Error(`Payments fetch failed: ${pyRes.error.message}`);
+
       dataContext = `
         Current System Data (Context):
-        - Vendors: ${JSON.stringify(vendors || [])}
-        - Projects: ${JSON.stringify(projects || [])}
-        - Payments: ${JSON.stringify(payments || [])}
+        - Vendors: ${JSON.stringify(vRes.data || [])}
+        - Projects: ${JSON.stringify(pRes.data || [])}
+        - Payments: ${JSON.stringify(pyRes.data || [])}
       `;
     }
 
@@ -75,14 +79,15 @@ export async function queryCureVendAI(prompt: string) {
     console.error('Error Details:', error);
     console.error('--- AI AGENT DIAGNOSTIC END ---');
 
-    if (error.message?.includes('API_KEY_INVALID')) return "API Key error. Please contact administration.";
+    if (error.message?.includes('API_KEY_INVALID')) return "API Key error. Please check your Gemini configuration.";
     if (error.message?.includes('safety')) return "Your request was flagged by safety filters. Could you try rephrasing?";
     
     // Check for common Supabase table errors
     if (error.message?.includes('relation') && error.message?.includes('does not exist')) {
-       return "Database error: One or more tables (vendors, projects, payments) are missing. Please run the SQL migrations in Supabase.";
+       return "Database error: One or more tables are missing. Please run the SQL migrations in Supabase.";
     }
 
-    return "I'm having a quick sync with the servers. Please try again in 5 seconds.";
+    // FALLBACK: Show the actual error message for debugging
+    return `Agent Error: ${error.message || 'Unknown failure'}. Check console for details.`;
   }
 }

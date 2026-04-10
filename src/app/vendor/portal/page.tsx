@@ -33,7 +33,10 @@ function MiniCalendar({ milestones = [] }: { milestones?: { date: string; label:
 
   const milestoneMap: Record<number, { label: string; color: string }[]> = {};
   milestones.forEach((m) => {
+    if (!m || !m.date) return;
     const d = new Date(m.date);
+    if (isNaN(d.getTime())) return;
+    
     if (d.getFullYear() === year && d.getMonth() === month) {
       const day = d.getDate();
       if (!milestoneMap[day]) milestoneMap[day] = [];
@@ -130,6 +133,12 @@ const ticketStatusConfig: Record<TicketStatus, string> = {
   resolved:    'bg-green-500/10 text-green-400',
   closed:      'bg-gray-500/10 text-gray-400',
 };
+
+// Safe config getters to prevent crashes if data is missing/invalid
+const getInvoiceStatus = (s: string) => invoiceStatusConfig[s as InvoiceStatus] || invoiceStatusConfig.draft;
+const getTatStatus = (s: string) => tatStatusConfig[s as TatStatus] || tatStatusConfig.on_track;
+const getTicketPriorityCls = (p: string) => ticketPriorityConfig[p as TicketPriority] || ticketPriorityConfig.low;
+const getTicketStatusCls = (s: string) => ticketStatusConfig[s as TicketStatus] || ticketStatusConfig.open;
 
 // ── Section Empty State ───────────────────────────────────────────────────────
 function EmptyState({ icon: Icon, message }: { icon: React.ElementType; message: string }) {
@@ -337,7 +346,7 @@ export default function VendorPortal() {
                     </thead>
                     <tbody>
                       {projects.map((p) => {
-                        const tat = tatStatusConfig[p.tat_status as TatStatus];
+                        const tat = getTatStatus(p.tat_status);
                         return (
                           <tr key={p.id} className="border-b border-white/5 hover:bg-white/5 transition">
                             <td className="px-6 py-4 font-medium">{p.name}</td>
@@ -397,7 +406,7 @@ export default function VendorPortal() {
                     </thead>
                     <tbody>
                       {invoices.map(inv => {
-                        const status = invoiceStatusConfig[inv.status as InvoiceStatus];
+                        const status = getInvoiceStatus(inv.status);
                         return (
                           <tr key={inv.id} className="border-b border-white/5 hover:bg-white/5 transition">
                             <td className="px-6 py-4 font-mono text-xs text-primary-blue">{inv.id}</td>
@@ -456,13 +465,13 @@ export default function VendorPortal() {
                           <td className="px-6 py-4 font-medium">{t.subject}</td>
                           <td className="px-6 py-4 text-gray-400">{t.project}</td>
                           <td className="px-6 py-4">
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${ticketPriorityConfig[t.priority as TicketPriority]}`}>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getTicketPriorityCls(t.priority)}`}>
                               {t.priority}
                             </span>
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${ticketStatusConfig[t.status as TicketStatus]}`}>
-                              {t.status.replace('_', ' ')}
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getTicketStatusCls(t.status)}`}>
+                              {(t.status || 'open').replace('_', ' ')}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-gray-400 text-xs">{t.created_at}</td>
