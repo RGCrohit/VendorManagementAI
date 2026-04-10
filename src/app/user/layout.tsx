@@ -59,8 +59,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const handleSignOut = async () => {
     try {
       await signOut();
-      router.push('/user/login');
-      router.refresh();
+      window.location.href = '/user/login';
     } catch (err) {
       window.location.href = '/user/login';
     }

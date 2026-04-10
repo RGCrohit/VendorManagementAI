@@ -31,24 +31,22 @@ export default function VendorKYC() {
 
   async function fetchKYCData() {
     try {
-      // Use a timeout or race for auth to prevent infinite hangs
-      const authPromise = supabase.auth.getUser();
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Auth Timeout')), 5000));
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
       
-      const { data: { user } } = await Promise.any([authPromise, timeoutPromise]) as any;
-
-      if (!user) {
-        router.push('/vendor/login');
+      if (authError || !user) {
+        console.error('Auth error in KYC:', authError);
+        window.location.href = '/vendor/login';
         return;
       }
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('gst_number, ifsc_code, bank_account, bank_name, pan_number, aadhar_number')
+        .select('*')
         .eq('id', user.id)
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
+      
       if (data) {
         setFormData({
           gst_number: data.gst_number || '',
@@ -59,8 +57,9 @@ export default function VendorKYC() {
           aadhar_number: data.aadhar_number || '',
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching KYC:', err);
+      setError(err.message || 'Failed to connect to security server');
     } finally {
       setLoading(false);
     }
@@ -101,19 +100,22 @@ export default function VendorKYC() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Loader2 className="animate-spin text-brand-blue" size={32} />
+      <div className="min-h-screen bg-dark-navy flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="animate-spin text-primary-blue mx-auto mb-4" size={32} />
+          <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Securing Connection...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface-soft py-12 px-4 font-sans">
+    <div className="min-h-screen bg-dark-navy py-12 px-4 font-sans text-white">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-10">
-          <Link href="/vendor/dashboard" className="flex items-center gap-2 text-gray-400 hover:text-brand-black transition group text-xs font-black uppercase tracking-widest">
+          <Link href="/vendor/portal" className="flex items-center gap-2 text-gray-500 hover:text-white transition group text-[10px] font-black uppercase tracking-[0.3em]">
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            Back to Dashboard
+            Back to Portal
           </Link>
           <div className="flex items-center gap-2">
              <Building2 size={24} className="text-brand-blue" />

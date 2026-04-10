@@ -151,8 +151,12 @@ export default function VendorPortal() {
   const [activeTab, setActiveTab] = useState<'overview' | 'invoices' | 'tickets' | 'calendar'>('overview');
 
   const handleSignOut = async () => {
-    await signOut();
-    router.push('/');
+    try {
+      await signOut();
+      window.location.href = '/';
+    } catch (err) {
+      window.location.href = '/';
+    }
   };
 
   // ── Stat Cards ──────────────────────────────────────────────────────────────

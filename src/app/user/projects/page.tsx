@@ -76,18 +76,25 @@ export default function ProjectsPage() {
     <div className="h-[calc(100vh-140px)] flex flex-col space-y-6 animate-slide-in overflow-hidden">
       
       {/* ── HEADER ── */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 flex-shrink-0">
-        <div>
-          <h1 className="text-4xl font-black text-brand-black tracking-tighter mb-1">Project Fleet</h1>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[8px]">Real-time Tracking / {projects.length} Entries</p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex p-1 bg-white border border-black/[0.03] rounded-2xl shadow-premium-sm">
-             <button onClick={() => setView('grid')} className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-[9px] font-black uppercase tracking-widest ${view === 'grid' ? 'bg-brand-black text-white' : 'text-gray-400'}`}><LayoutGrid size={14} /> Grid</button>
-             <button onClick={() => setView('calendar')} className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-[9px] font-black uppercase tracking-widest ${view === 'calendar' ? 'bg-brand-black text-white' : 'text-gray-400'}`}><CalendarDays size={14} /> Schedule</button>
-          </div>
-          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-3 px-6 py-3.5 bg-brand-black text-white rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-premium-xl hover:shadow-glow-blue transition-all active:scale-95"><Sparkles size={16} className="text-brand-blue" /> New Project</button>
-        </div>
+      </div>
+
+      {/* ── PROJECT HIGHLIGHTS ── */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-shrink-0">
+         {[
+            { label: 'Active Ventures', value: projects.length, icon: Building2, color: 'text-brand-blue', bg: 'bg-brand-blue/5' },
+            { label: 'Deployment Budget', value: `₹${(projects.reduce((acc, p) => acc + (Number(p.budget) || 0), 0) / 10000000).toFixed(1)}Cr`, icon: Sparkles, color: 'text-brand-pink', bg: 'bg-brand-pink/5' },
+            { label: 'Completion Avg', value: `${projects.length ? Math.round(projects.reduce((acc, p) => acc + (p.budget ? (p.spent/p.budget)*100 : 0), 0) / projects.length) : 0}%`, icon: LayoutGrid, color: 'text-brand-yellow', bg: 'bg-brand-yellow/5' },
+            { label: 'High Risk Alerts', value: projects.filter(p => (p.spent/p.budget) > 0.9).length, icon: AlertCircle, color: 'text-red-500', bg: 'bg-red-50/50' },
+         ].map((stat, i) => (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} key={i} className="glass p-4 rounded-3xl bg-white border-white shadow-premium-sm flex items-center gap-4">
+               <div className={`w-10 h-10 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center`}><stat.icon size={18} /></div>
+               <div>
+                  <p className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{stat.label}</p>
+                  <p className="text-sm font-black text-brand-black tracking-tighter">{stat.value}</p>
+               </div>
+            </motion.div>
+         ))}
       </div>
 
       <AnimatePresence mode="wait">
