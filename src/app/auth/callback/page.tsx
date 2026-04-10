@@ -38,7 +38,17 @@ export default function AuthCallback() {
 
         const role = profile?.role ?? 'PENDING';
 
-        // Route by role
+        // ── Redirect Logic Resolution ──
+        // 1. Check URL params first (highest priority)
+        const urlParams = new URLSearchParams(window.location.search);
+        const intendedRole = urlParams.get('intended_role');
+
+        if (intendedRole === 'VENDOR') {
+           router.push('/vendor/portal');
+           return;
+        }
+
+        // 2. Redirect by database role (if already set)
         if (role === 'SCRUM_MASTER') {
           router.push('/scrum-master/dashboard');
         } else if (USER_ROLES.includes(role)) {
@@ -46,10 +56,9 @@ export default function AuthCallback() {
         } else if (role === 'VENDOR') {
           router.push('/vendor/portal');
         } else {
-          // PENDING or unknown — check URL param first (from Google SSO), then user_metadata
-          const urlParams = new URLSearchParams(window.location.search);
-          const intendedRole = urlParams.get('intended_role') || session.user.user_metadata?.role || 'PROJECT_MANAGER';
-          if (intendedRole === 'VENDOR') {
+          // 3. Last fallback: Check user metadata or default to user dashboard
+          const metaRole = session.user.user_metadata?.role;
+          if (metaRole === 'VENDOR') {
             router.push('/vendor/portal');
           } else {
             router.push('/user/dashboard');

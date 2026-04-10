@@ -87,7 +87,7 @@ SELECT
   u.email,
   COALESCE(u.raw_user_meta_data->>'full_name', u.raw_user_meta_data->>'name', split_part(u.email, '@', 1)),
   COALESCE(u.raw_user_meta_data->>'full_name', u.raw_user_meta_data->>'name'),
-  COALESCE(u.raw_user_meta_data->>'role', 'PROJECT_MANAGER'),
+  COALESCE(u.raw_user_meta_data->>'role', 'PENDING'),
   true  -- Set existing users as active
 FROM auth.users u
 WHERE NOT EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = u.id)
