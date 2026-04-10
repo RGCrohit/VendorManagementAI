@@ -22,7 +22,7 @@ const NAV_ITEMS = [
   { name: 'Projects',   href: '/user/projects',  icon: FolderKanban },
   { name: 'Finance',    href: '/user/finance',    icon: Wallet },
   { name: 'Onboarding', href: '/user/onboarding', icon: UserCheck },
-  { name: 'Reports',    href: '/user/reports',    icon: FileBarChart, sub: 'Org Chart' },
+  { name: 'ORG View',    href: '/user/reports',    icon: FileBarChart, sub: 'Governance' },
 ];
 
 const INITIAL_MESSAGE = { role: 'bot', text: "Hi! I'm your CureVendAI Executive Assistant. You can ask me to summarize data, send emails, or schedule meetings via voice." };

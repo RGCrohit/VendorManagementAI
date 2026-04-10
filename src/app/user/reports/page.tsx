@@ -24,11 +24,10 @@ export default function ReportingPage() {
   return (
     <div className="space-y-8 animate-slide-in pb-10 max-h-screen">
       
-      {/* Compact Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-black text-brand-black tracking-tighter">CureVend AI Holding</h1>
-          <p className="text-gray-400 font-bold uppercase tracking-widest text-[9px]">Governance Ecosystem • Fit HQ</p>
+          <h1 className="text-3xl font-black text-brand-black tracking-tighter">ORG View (L3)</h1>
+          <p className="text-gray-400 font-bold uppercase tracking-widest text-[9px]">Strategic Hierarchy • Fit HQ Governance</p>
         </div>
         <div className="flex gap-3">
            <div className="px-4 py-2 bg-green-50 text-green-600 rounded-xl text-[9px] font-black uppercase tracking-widest border border-green-100 flex items-center gap-2">

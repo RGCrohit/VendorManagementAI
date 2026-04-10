@@ -20,7 +20,7 @@ export async function queryCureVendAI(prompt: string) {
 
     // 2. Decide if we need data context
     let dataContext = '';
-    const needsData = q.includes('summary') || q.includes('project') || q.includes('vendor') || q.includes('payment') || q.includes('spend') || q.includes('money');
+    const needsData = q.includes('summary') || q.includes('project') || q.includes('vendor') || q.includes('payment') || q.includes('spend') || q.includes('money') || q.includes('org') || q.includes('view') || q.includes('report') || q.includes('hierarchy');
     
     if (needsData) {
       const [{ data: vendors }, { data: projects }, { data: payments }] = await Promise.all([
@@ -68,9 +68,21 @@ export async function queryCureVendAI(prompt: string) {
     return text || "I'm here to help. Could you tell me more about what you need?";
 
   } catch (error: any) {
-    console.error('AI Agent Error:', error);
+    // DIAGNOSTIC LOGGING: This helps identify if it's a Supabase error or a Gemini error
+    console.error('--- AI AGENT DIAGNOSTIC START ---');
+    console.error('Query:', prompt);
+    console.error('Error Message:', error.message);
+    console.error('Error Details:', error);
+    console.error('--- AI AGENT DIAGNOSTIC END ---');
+
     if (error.message?.includes('API_KEY_INVALID')) return "API Key error. Please contact administration.";
     if (error.message?.includes('safety')) return "Your request was flagged by safety filters. Could you try rephrasing?";
+    
+    // Check for common Supabase table errors
+    if (error.message?.includes('relation') && error.message?.includes('does not exist')) {
+       return "Database error: One or more tables (vendors, projects, payments) are missing. Please run the SQL migrations in Supabase.";
+    }
+
     return "I'm having a quick sync with the servers. Please try again in 5 seconds.";
   }
 }
